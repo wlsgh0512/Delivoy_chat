@@ -34,6 +34,7 @@ import okhttp3.Response;
  * 회원 가입
  * 맨 위에 회원번호(자동 생성)이 있는데 없애고 회원 가입을 완료하면
  * Toast 메시지로 생성 된 회원번호를 보여주는게 맞을 것 같아 수정할 예정.
+ *
  */
 
 public class Join_Member extends AppCompatActivity {

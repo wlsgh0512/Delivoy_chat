@@ -36,7 +36,7 @@ import okhttp3.Response;
  * 필수 약관 동의 두개가 모두 체크(전체 동의)되어야 확인 버튼이 눌리도록,
  * 구현 목표 -> 전체 동의 후 확인 버튼을 눌렀을 때 user_consent_response 확인하고 다음 화면으로.
  * 저번에 오셔서 수정해주신 POST 코드랑 구글링 참조해서 나름 작성해보았는데
- * 잘 해결이 안되서 코드를 이렇게 작성하면 되는지 문제가 있는 코드인지가 제일 궁금합니다...
+ * 잘 해결이 안되서 코드를 이렇게 작성하면 되는지 문제가 있는 코드인지가 제일 궁금합니다..
  */
 
 public class User_Consent extends AppCompatActivity {
