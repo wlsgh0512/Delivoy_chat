@@ -34,6 +34,8 @@ import okhttp3.Response;
 /**
  * 친구 탭 -> 친구 목록 조회.
  * ListView에 데이터 받아와서 .add()하는 식으로 구현하려 했으나 갱신 x.
+ * Fragment 사용.
+ * addQueryParameter 부분이 의심..
  */
 
 public class Frag1 extends Fragment {

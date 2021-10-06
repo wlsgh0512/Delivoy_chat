@@ -37,7 +37,8 @@ import okhttp3.Response;
  * 맨 위에 회원번호(자동 생성)이 있는데 없애고 회원 가입을 완료하면
  * Toast 메시지로 생성 된 회원번호를 보여주는게 맞을 것 같아 수정할 예정.
  * 10/06 error code 416 발견 Response{protocol=http/1.1, code=416, message=Requested Range Not Satisfiable, url=http://222.239.254.253/chatt/app/users/user_post.php}
- *
+ * -> postman에 Value 값 넣어서 가입이 완료되는 것까지  확인.
+ * 가입은 완료되는데 dialog 뜨기 전에 프로그램이 죽는 것 같아서 다시 확인 필요.
  */
 
 public class Join_Member extends AppCompatActivity {
@@ -79,8 +80,8 @@ public class Join_Member extends AppCompatActivity {
     public void onclick_join_member(View view) {
 //        Toast.makeText(this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 //
-        Intent intent = new Intent(Join_Member.this, MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(Join_Member.this, MainActivity.class);
+//        startActivity(intent);
 
         Join();
 
@@ -151,7 +152,6 @@ public class Join_Member extends AppCompatActivity {
 
                                 alertDialog.show();
 
-                                        Toast.makeText(getApplicationContext(), "첫 로그인 시 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

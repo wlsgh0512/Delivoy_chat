@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.LoginResponse;
 import com.google.gson.Gson;
 
@@ -80,6 +81,7 @@ public class Find_id extends AppCompatActivity {
                 @Override
                 public void onResponse(Call call, final Response response) throws IOException {
                     if (!response.isSuccessful()) {
+                        final ErrorDto error = new Gson().fromJson(response.body().string(), ErrorDto.class);
                         // 응답 실패
                         Log.i("tag", "응답실패");
                     } else {
