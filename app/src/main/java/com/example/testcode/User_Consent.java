@@ -34,9 +34,10 @@ import okhttp3.Response;
 /**
  * 이용약관 동의
  * 필수 약관 동의 두개가 모두 체크(전체 동의)되어야 확인 버튼이 눌리도록,
- * 구현 목표 -> 전체 동의 후 확인 버튼을 눌렀을 때 user_consent_response 확인하고 다음 화면으로.
- * 저번에 오셔서 수정해주신 POST 코드랑 구글링 참조해서 나름 작성해보았는데
- * 잘 해결이 안되서 코드를 이렇게 작성하면 되는지 문제가 있는 코드인지가 제일 궁금합니다..
+ * MainActivity에서 ucAgreeOption , ucThirdPartyOption 값이 0인 경우 약관 동의 화면.
+ * 체크박스 체크가 완료된 상태로 확인을 눌렀을 때 agreement() -> runOnUiThread에서
+ * ucAgreeOption, ucThirdPartyOption 값을 0 -> 1로 바꾼다 ?
+ * addFormDataPart에서 Option Value 값을 어떻게 넣을지 잘 모르겠습니다..
  */
 
 public class User_Consent extends AppCompatActivity {
@@ -187,10 +188,12 @@ public class User_Consent extends AppCompatActivity {
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("ucAreaNo","88")
-                    .addFormDataPart("ucDistribId","17")
-                    .addFormDataPart("ucAgencyId","1")
-                    .addFormDataPart("ucMemCourId","1")
+                    .addFormDataPart("ucAreaNo",((TextView) findViewById(R.id.edtUserAreaNo)).getText().toString())
+                    .addFormDataPart("ucDistribId",((TextView) findViewById(R.id.edtUserDistribId)).getText().toString())
+                    .addFormDataPart("ucAgencyId",((TextView) findViewById(R.id.edtUserAgencyId)).getText().toString())
+                    .addFormDataPart("ucMemCourId",((TextView) findViewById(R.id.edtUserCourId)).getText().toString())
+
+                    // Value 값을 체크박스 체크 여부에 따라 받을수 있을지??
                     .addFormDataPart("ucAgreeOption","1")
                     .addFormDataPart("ucThirdPartyOption","1")
                     .build();
