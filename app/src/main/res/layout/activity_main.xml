@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:text="DeliVoy"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="#1F51B7"/>
+    <RadioGroup
+        android:id="@+id/rg_login_method"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        >
+
+        <RadioButton
+            android:id="@+id/rb_old_login"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_segment_radio_button"
+            android:button="@android:color/transparent"
+            android:text="코드 방식(기존방식)"
+            android:textAlignment="center"/>
+
+        <RadioButton
+            android:id="@+id/rb_user_id_login"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_segment_radio_button"
+            android:button="@android:color/transparent"
+            android:text="아이디 방식"
+            android:textAlignment="center"
+            />
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/ll_old_user_id_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/trade_detail_card_bottom_margin"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtUserAreaNo"
+            style="@style/EdtNewStyle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:digits="0123456789"
+            android:lines="1"
+            android:maxLength="3"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18dp"
+            android:inputType="number"/>
+
+        <TextView style="@style/TvUserIdDivider" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtUserDistribId"
+            style="@style/EdtNewStyle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:digits="0123456789CFADcfad"
+            android:lines="1"
+            android:maxLength="3"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18dp"
+            android:inputType="number"/>
+
+        <TextView style="@style/TvUserIdDivider" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtUserAgencyId"
+            style="@style/EdtNewStyle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:digits="0123456789"
+            android:lines="1"
+            android:maxLength="3"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18dp"
+            android:inputType="number"/>
+
+        <TextView style="@style/TvUserIdDivider" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtUserCourId"
+            style="@style/EdtNewStyle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:digits="0123456789"
+            android:lines="1"
+            android:maxLength="4"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18dp"
+            android:inputType="number"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/user_id"
+            style="@style/EdtNewStyle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/trade_detail_card_bottom_margin"
+            android:lines="1"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18dp"
+            android:singleLine="true"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/user_pw"
+        style="@style/EdtNewStyle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/trade_detail_card_bottom_margin"
+        android:lines="1"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="18dp"
+        android:singleLine="true"
+        android:inputType="textPassword"/>
+
+
+        <Button
+            android:id="@+id/btn_login"
+            android:onClick="onClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="로그인"/>
+        <CheckBox
+            android:id="@+id/cbAutoLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:text="자동 로그인"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:onClick="onClick"
+                android:id="@+id/btnFindUserId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="아이디 찾기"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="4dp"
+                android:textSize="16dp" />
+
+            <TextView
+                android:onClick="onClick"
+                android:id="@+id/btnFindUserPw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="비밀번호 찾기"
+                android:textSize="16dp" />
+
+
+
+        </LinearLayout>
+
+        <TextView
+            android:onClick="onClick"
+            android:id="@+id/join_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원가입"
+            android:textSize="16dp"
+            android:layout_marginTop="20dp"
+             android:layout_gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

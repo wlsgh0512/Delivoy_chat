@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">LoginActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="chat_long">
+        <item>채팅방 이름 변경</item>
+        <item>채팅방 상단 고정</item>
+        <item>나가기</item>
+    </string-array>
+
+    <string name="underlined_text"><u>보기</u></string>
+    <string name="abcd">이용약관</string>
+    <string name="btn_agr">ㅁㅁ</string>
+    <string name="btn_agr2">ㅁㅁ</string>
+    <string name="btn_agr3">ㅁㅁ</string>
+</resources>

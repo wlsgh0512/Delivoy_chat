@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/member_number"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="회원번호 (자동생성)"
+        android:layout_gravity="center"
+        android:layout_marginTop="125dp"/>
+
+    <EditText
+        android:id="@+id/join_id"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="사용자 ID"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/join_pw"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="비밀번호"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:inputType="textPassword"/>
+
+    <EditText
+        android:id="@+id/join_name"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="이름 (실명)"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/join_nickname"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="별명 (애칭)"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/join_phone_number"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="휴대전화번호"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/join_mail"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:hint="이메일주소"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:inputType="textEmailAddress"/>
+
+    <TextView
+        android:id="@+id/authority"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/memo_border"
+        android:text="일반 사용자"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:onClick="onclick_join_member"
+        android:id="@+id/btn_join"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="확인"
+        android:layout_gravity="center"/>
+
+    <!--    <Spinner-->
+    <!--        android:id="@+id/spinner"-->
+    <!--        android:layout_width="250dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:background="@drawable/memo_border"/>-->
+
+
+</LinearLayout>

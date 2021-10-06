@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:text="전체 동의"
+            android:textSize="14sp"
+            android:textColor="#6A6666"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        >
+        <CheckBox
+            android:id="@+id/checkbox2"
+            android:layout_weight="1"
+            android:text="[필수] 서비스 이용 약관(위치기반 서비스 포함)"
+            android:textSize="14sp"
+            android:textColor="#6A6666"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_agr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="Onclick1"
+            android:textColor="@color/black"
+            android:background="#00ff0000"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+        <CheckBox
+            android:id="@+id/checkbox3"
+            android:layout_weight="1"
+            android:text="[필수] 제3자 정보 제공 동의 약관"
+            android:textColor="#6A6666"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_agr2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="Onclick2"
+            android:textColor="@color/black"
+            android:background="#00ff0000"
+            />
+
+
+    </LinearLayout>
+    <Button
+        android:onClick="onClick_user_consent"
+        android:id="@+id/btn_consent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="확인"/>
+<TextView
+    android:layout_marginTop="100dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="제공된 정보는 이용자 식별, 통계, 계정 연동 및 CS등을 위해 서비스 이용 기간동안 활용 및 보관합니다.
+귀하께서는 개인정보 제3자 제공 동의를 거부할 권리가 있으나 동의 거부 시 서비스 이용에 제한을 받을 수 있습니다."/>
+</LinearLayout>

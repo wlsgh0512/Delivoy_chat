@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="계정 관리">
+    <Preference
+        android:key="user_id"
+        android:title="아이디"
+        />
+        <Preference
+            android:key="user_pw"
+            android:title="비밀번호 변경"/>
+        <Preference
+            android:key="secession"
+            android:title="회원 탈퇴"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="메시지 알림">
+        <SwitchPreference
+            android:key="message"
+            android:title="메시지 알림"/>
+
+        <SwitchPreference
+            android:key="vibration"
+            android:title="진동"/>
+
+<!--        <PreferenceScreen-->
+<!--            android:key="keyword_screen"-->
+<!--            android:title="키워드 알림"-->
+<!--            android:summary="사용안함">-->
+
+<!--            <SwitchPreference-->
+<!--                android:defaultValue="false"-->
+<!--                android:key="keyword"-->
+<!--                android:summary="등록된 키워드가 포함된 메시지는 채팅방 알림이 꺼져 있어도 푸시 알림을 받게 되어 키워드는 강조되어 보여 집니다."-->
+<!--                android:title="키워드 알림"/>-->
+<!--            <ListPreference-->
+<!--                android:entries="@array/array_voice"-->
+<!--                android:entryValues="@array/array_voice"-->
+<!--                android:key="keyword_sound_list"-->
+<!--                android:summary="카톡"-->
+<!--                android:title="키워드 전용 알림음"-->
+<!--                android:dependency="keyword"-->
+<!--                />-->
+
+<!--        </PreferenceScreen>-->
+
+        <SwitchPreference
+            android:key="sound"
+            android:title="소리"/>
+        <ListPreference
+            android:entries="@array/array_voice"
+            android:entryValues="@array/array_voice"
+            android:key="sound_list"
+            android:summary="카톡"
+            android:title="알림음"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="화면">
+        <Preference
+            android:key="text_size"
+            android:title="텍스트 크기"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="정보">
+        <Preference
+            android:key="version"
+            android:title="버전 : 3.0.210512.001
+"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

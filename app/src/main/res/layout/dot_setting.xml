@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+    android:layout_marginLeft="10dp">
+
+    <TextView
+        android:textSize="20dp"
+        android:id="@+id/notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="알림"
+        android:textColor="@color/purple_700" />
+
+    <TextView
+        android:id="@+id/sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notice"
+        android:layout_marginTop="10dp"
+        android:text="알림음" />
+    <com.kyleduo.switchbutton.SwitchButton
+        android:layout_marginTop="10dp"
+        android:id="@+id/sound_use_listener"
+        style="@style/SwitchButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/notice"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/sound" />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/sound"
+        android:id="@+id/choice_sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알림음 선택"/>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:id="@+id/vib"
+        android:layout_below="@id/choice_sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="진동"/>
+    <com.kyleduo.switchbutton.SwitchButton
+        android:layout_marginTop="10dp"
+        android:id="@+id/vib_use_listener"
+        style="@style/SwitchButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/choice_sound"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/sound" />
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/vib"
+        android:text="화면"
+        android:textColor="@color/purple_700" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/text_size"
+        android:text="텍스트 크기"
+        android:layout_below="@id/title_text"/>
+
+
+
+</RelativeLayout>
+

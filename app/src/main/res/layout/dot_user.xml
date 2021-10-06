@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:textSize="20dp"
+        android:id="@+id/notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="계정 관리"
+        android:textColor="@color/purple_700" />
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notice"
+        android:layout_marginTop="10dp"
+        android:text="아이디"
+
+        />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/id"
+        android:id="@+id/change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="비밀번호 변경"/>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/change"
+        android:id="@+id/out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="회원 탈퇴"/>
+
+    <TextView
+        android:id="@+id/lookup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/out"
+        android:layout_marginTop="10dp"
+        android:text="이력 조회" />
+
+
+
+
+</RelativeLayout>
+

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <EditText
+        android:layout_marginTop="150dp"
+        android:id="@+id/input_id"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:background="@drawable/memo_border"
+        android:layout_centerHorizontal="true"
+        android:hint="회원 ID" />
+
+    <EditText
+        android:id="@+id/input_phone"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/input_id"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/memo_border"
+        android:hint="휴대전화번호"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/key"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/input_phone"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/memo_border"
+        android:hint="휴대전화 인증키"
+        android:inputType="number" />
+    <Button
+        android:id="@+id/key_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/key"
+        android:layout_alignBaseline="@id/key"
+        android:text="인증"
+        android:onClick="onClick_change_pw"
+        />
+
+    <EditText
+        android:id="@+id/now_pw"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/key"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/memo_border"
+        android:hint="현재 PW"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/new_pw"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/now_pw"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/memo_border"
+        android:hint="신규 PW"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/new_pw_check"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/new_pw"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/memo_border"
+        android:hint="PW 확인"
+        android:inputType="number" />
+
+
+    <Button
+        android:id="@+id/change_success"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_pw_check"
+        android:layout_centerInParent="true"
+        android:onClick="onClick_change_pw"
+        android:text="완료" />
+
+</RelativeLayout>

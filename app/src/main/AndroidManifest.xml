@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.testcode">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="채팅 프로그램"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/Theme.TestCode">
+        <activity
+            android:name=".Chat_invite_main"
+            android:exported="true"
+            android:parentActivityName=".Chat" />
+        <activity
+            android:name=".WebViewActivity3"
+            android:exported="true"
+            android:parentActivityName=".User_Consent" />
+        <activity
+            android:name=".WebViewActivity2"
+            android:exported="true"
+            android:parentActivityName=".User_Consent" />
+        <activity
+            android:name=".WebViewActivity1"
+            android:exported="true"
+            android:parentActivityName=".User_Consent" />
+        <activity
+            android:name=".User_Consent"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Chat_invite_room"
+            android:exported="true"
+            android:parentActivityName=".Chat" />
+        <activity
+            android:name=".TextSize"
+            android:exported="true"
+            android:parentActivityName=".SettingActivity" />
+        <activity
+            android:name=".Change_pw"
+            android:exported="true"
+            android:parentActivityName=".SettingActivity" />
+        <activity
+            android:name=".Chat"
+            android:exported="true"
+            android:parentActivityName=".ListActivity" />
+        <activity
+            android:name=".Join_Member"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Find_id"
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".Find_pw"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ListActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SettingActivity"
+            android:exported="true"
+            android:parentActivityName=".ListActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
