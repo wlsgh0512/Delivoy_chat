@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                         ag = edtUserAgencyId.getText().toString();
                         me = edtUserCourId.getText().toString();
                         oldid = ar + di + ag + me;
+                        String asd = "1";
                         // 응답 성공
                         Log.i("tag", "응답 성공");
                         final String responseData = response.body().string();
@@ -175,10 +176,22 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             try {
                                 // 아이디 비밀번호 일치 시 로그인 성공하게 하는 조건?
-                                if (oldid.equals(loginResponse.ucAreaNo + loginResponse.ucDistribId + loginResponse.ucAgencyId + loginResponse.ucMemCourId)) {
-                                    Intent intent = new Intent(MainActivity.this, User_Consent.class);
+//                                if (oldid.equals(loginResponse.ucAreaNo + loginResponse.ucDistribId + loginResponse.ucAgencyId + loginResponse.ucMemCourId)) {
+//                                    Intent intent = new Intent(MainActivity.this, User_Consent.class);
+//                                    startActivity(intent);
+//                                    Toast.makeText(getApplicationContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show();
+//                                }
+
+                                // Option 두 개의 Value값이 1이라면 이미 동의를 한 것.
+                                // 약관 동의를 마치면 Option이 1이 되게 하여 약관 동의 페이지를 생략하도록.
+                                if(loginResponse.ucAgreeOption.equals("1") && loginResponse.ucThirdPartyOption.equals("1") ) {
+                                    Intent intent = new Intent(MainActivity.this, ListActivity.class);
                                     startActivity(intent);
                                     Toast.makeText(getApplicationContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent intent = new Intent(MainActivity.this, User_Consent.class);
+                                    startActivity(intent);
+                                    Toast.makeText(getApplicationContext(), "첫 로그인 시 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
                                 }
 
 

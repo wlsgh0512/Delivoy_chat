@@ -1,6 +1,7 @@
 package com.example.testcode;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -24,6 +25,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,6 +36,7 @@ import okhttp3.Response;
  * 회원 가입
  * 맨 위에 회원번호(자동 생성)이 있는데 없애고 회원 가입을 완료하면
  * Toast 메시지로 생성 된 회원번호를 보여주는게 맞을 것 같아 수정할 예정.
+ * 10/06 error code 416 발견 Response{protocol=http/1.1, code=416, message=Requested Range Not Satisfiable, url=http://222.239.254.253/chatt/app/users/user_post.php}
  *
  */
 
@@ -60,7 +63,6 @@ public class Join_Member extends AppCompatActivity {
 
         //이 작업은 매니패스트에서 함
 
-        member_number = (TextView) findViewById(R.id.member_number);
         authority = (TextView) findViewById(R.id.authority);
         join_id = (EditText) findViewById(R.id.join_id);
         join_pw = (EditText) findViewById(R.id.join_pw);
@@ -87,18 +89,29 @@ public class Join_Member extends AppCompatActivity {
     public void Join() {
         try {
             OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/login/user_post.php", hostname);
+            String url = String.format("http://%s/chatt/app/users/user_post.php", hostname);
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("acUserId","123")
-                    .addFormDataPart("acPassword","1234")
-                    .addFormDataPart("acRealName","박진호")
-                    .addFormDataPart("acNickName","테스트아이디")
-                    .addFormDataPart("acCellNo","01099778981")
-                    .addFormDataPart("acEmailAddress","jhpark@roadvoy.com")
+                    .addFormDataPart("acUserId", ((TextView) findViewById(R.id.join_id)).getText().toString())
+                    .addFormDataPart("acPassword",((TextView) findViewById(R.id.join_pw)).getText().toString())
+                    .addFormDataPart("acRealName",((TextView) findViewById(R.id.join_name)).getText().toString())
+                    .addFormDataPart("acNickName",((TextView) findViewById(R.id.join_nickname)).getText().toString())
+                    .addFormDataPart("acCellNo",((TextView) findViewById(R.id.join_phone_number)).getText().toString())
+                    .addFormDataPart("acEmailAddress",((TextView) findViewById(R.id.join_mail)).getText().toString())
                     .addFormDataPart("ucAccessFlag","0")
                     .build();
+
+//            RequestBody requestBody = new FormBody.Builder()
+//                    .add("acUserId", ((EditText) findViewById(R.id.join_id)).getText().toString())
+//                    .add("acPassword",((EditText) findViewById(R.id.join_pw)).getText().toString())
+//                    .add("acRealName",((EditText) findViewById(R.id.join_name)).getText().toString())
+//                    .add("acNickName",((EditText) findViewById(R.id.join_nickname)).getText().toString())
+//                    .add("acCellNo",((EditText) findViewById(R.id.join_phone_number)).getText().toString())
+//                    .add("acEmailAddress",((EditText) findViewById(R.id.join_mail)).getText().toString())
+//                    .add("ucAccessFlag","0")
+//                    .build();
+
 
             Request request = new Request.Builder()
                     .url(url)
@@ -126,7 +139,19 @@ public class Join_Member extends AppCompatActivity {
                         final Join_Response join_response = new Gson().fromJson(responseData, Join_Response.class);
                         runOnUiThread(() -> {
                             try {
-                                Toast.makeText(getApplicationContext(), "응답" + join_response.acRealName, Toast.LENGTH_SHORT).show();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Join_Member.this);
+
+                                builder.setTitle("회원가입이 완료되었습니다.").setMessage("코드 방식 : " + join_response.ucAreaNo + "-" +
+                                        join_response.ucDistribId + "-" +
+                                        join_response.ucAgencyId + "-" +
+                                        join_response.ucMemCourId + " ,\n" +
+                                        "아이디 방식 : " + join_response.acUserId + " 입니다.");
+
+                                AlertDialog alertDialog = builder.create();
+
+                                alertDialog.show();
+
+                                        Toast.makeText(getApplicationContext(), "첫 로그인 시 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

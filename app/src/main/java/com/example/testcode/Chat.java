@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,7 +40,10 @@ import okhttp3.Response;
 
 /**
  * 채팅창 화면.
- *
+ * response.body.string() 값 잘 받아오는것까지는 확인.
+ * ArrayList에 add해서 채팅창에 갱신 확인.
+ * 나오긴 하는데 화면에 진입했을 때 딱 안나오고 EditText를 한번 눌러야 나오는 상태.
+ * 이유를 잘 모르겠어서 추가 검색 필요할 듯.
  */
 
 public class Chat extends AppCompatActivity {
@@ -47,7 +51,8 @@ public class Chat extends AppCompatActivity {
     RecyclerView recyvlerv;
     EditText editText1;
     String msg = "";
-    private ArrayList<DataItem> dataList;
+    ArrayList<DataItem> dataList;
+//    ArrayList<DataItem> dataList = new ArrayList<DataItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,10 @@ public class Chat extends AppCompatActivity {
         recyvlerv = (RecyclerView)findViewById(R.id.recyvlerv);
 
         initializeData();
+        talk_get();
+
+//      임의로 값 넣어서 채팅창에 뜨는 것까지 확인.
+//      dataList.add(new DataItem("하이루 여포, 동탁", "김동현", Code.ViewType.LEFT_CONTENT));
 
         LinearLayoutManager manager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
@@ -72,7 +81,7 @@ public class Chat extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
-        talk_get();
+
     }
 
     @Override
@@ -83,19 +92,23 @@ public class Chat extends AppCompatActivity {
     }
 
 
-    // 우측 상단 새로운 채팅방 만들기, 설정
+    // 대화상대 초대, 설정
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         switch (item.getItemId()) {
+            /**
+             * 대화상대 초대.
+             * EditText 밑으로 친구 목록 리스트업.
+             * 검색해서 초대(초성 포함) 구현하는 것이 목표.
+             */
             case R.id.invite:
                 Intent intent = new Intent(Chat.this, Chat_invite_room.class);
                 startActivity(intent);
-                // 채팅방 만드는 화면 넣을것
                 break;
-            case R.id.exit:
 
+            case R.id.exit:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("채팅방을 나가시겠습니까?")
                         .setCancelable(true)
@@ -122,11 +135,20 @@ public class Chat extends AppCompatActivity {
     // 전송 버튼을 눌렀을 때
     public void onClick_sendmsg(View view) {
 
+         msg = editText1.getText().toString();
+           dataList.add(new DataItem(msg, "사용자1", Code.ViewType.RIGHT_CONTENT));
+           recyvlerv.scrollToPosition(dataList.size()-1);
+           editText1.setText("");
+
+        //
+//        talk_get();
     }
 
-    // 파일 관련 버튼을 눌렀을 때
-    // 다이얼로그 방식으로 띄우면 채팅을 방해하는 요소가 되니까
-    // 다른 방법 찾을것.
+    /**
+     *  파일 관련 버튼을 눌렀을 때
+     *  다이얼로그 방식으로 띄우면 채팅을 방해하는 요소가 되니까
+     *  다른 방법 찾을것.
+     */
     public void addFile(View view) {
 
     }
@@ -137,8 +159,11 @@ public class Chat extends AppCompatActivity {
             String url = String.format("http://%s/chatt/app/talks/talk_get.php", hostname);
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-            urlBuilder.addQueryParameter("uiTalkNo", "22"); // 22
-            urlBuilder.addQueryParameter("uiRoomNo", "9"); // 9
+            urlBuilder.addQueryParameter("uiTalkNo", "1"); // 22
+            urlBuilder.addQueryParameter("uiRoomNo", "1"); // 9
+            /**
+             * 지금은 확인만 하려고 value 값을 임의로 집어넣기.
+             */
 //            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) findViewById(R.id.edtUserAreaNo)).getText().toString());
 //            urlBuilder.addQueryParameter("ucDistribId", ((TextView) findViewById(R.id.edtUserDistribId)).getText().toString());
 //            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) findViewById(R.id.edtUserAgencyId)).getText().toString());
@@ -167,20 +192,25 @@ public class Chat extends AppCompatActivity {
                         Log.i("tag", "응답 성공");
                         final String responseData = response.body().string();
                         final Chat_Response chat_response = new Gson().fromJson(responseData, Chat_Response.class);
+
+                        String abc = chat_response.acTalkMesg;
+                        String qwe = chat_response.acRealName;
+
                         runOnUiThread(() -> {
                             try {
-//                                    Toast.makeText(getApplicationContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show();
+
                                 dataList.add(new DataItem(chat_response.acTalkMesg, chat_response.acRealName, Code.ViewType.LEFT_CONTENT));
-                                Toast.makeText(getApplicationContext(), "" + chat_response.ucAreaNo, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "" + chat_response.acTalkMesg, Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         });
+
+
                     }
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

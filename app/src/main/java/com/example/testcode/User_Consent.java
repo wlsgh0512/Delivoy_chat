@@ -167,13 +167,15 @@ public class User_Consent extends AppCompatActivity {
     // -> 어차피 동의를 받아야 서비스를 이용할 수 있다면 체크가 안되면 안넘어가게 ?
     public void onClick_user_consent(View view) {
         // 어차피 체크박스 2,3 중 하나라도 체크가 되어있지 않으면 체크박스1은 체크 x.
+
+
         if (!checkBox.isChecked()) {
             return;
         } else {
-//            agreement();
+            agreement();
 
-            Intent intent = new Intent(User_Consent.this, ListActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(User_Consent.this, ListActivity.class);
+//            startActivity(intent);
 
         }
     }
@@ -220,7 +222,11 @@ public class User_Consent extends AppCompatActivity {
 
                         runOnUiThread(() -> {
                             try {
-                                Toast.makeText(getApplicationContext(), "응답" + user_consent_response.ucAgreeOption, Toast.LENGTH_SHORT).show();
+//                                user_consent_response.ucAgreeOption = "1";
+//                                user_consent_response.ucThirdPartyOption = "1";
+                                Toast.makeText(getApplicationContext(), "응답" + user_consent_response.acUserId, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(User_Consent.this, ListActivity.class);
+                                            startActivity(intent);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

@@ -5,14 +5,7 @@
     android:orientation="vertical"
     >
 
-    <TextView
-        android:id="@+id/member_number"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:background="@drawable/memo_border"
-        android:hint="회원번호 (자동생성)"
-        android:layout_gravity="center"
-        android:layout_marginTop="125dp"/>
+
 
     <EditText
         android:id="@+id/join_id"
@@ -20,7 +13,7 @@
         android:layout_height="50dp"
         android:background="@drawable/memo_border"
         android:hint="사용자 ID"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="125dp"
         android:layout_gravity="center"/>
 
     <EditText

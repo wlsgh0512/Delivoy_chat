@@ -40,6 +40,7 @@ public class Frag1 extends Fragment {
     String hostname = "222.239.254.253";
     static final String[] LIST_MENU = {"가가가", "나나나", "다다다", "라라라", "마마마", "바바바", "사사사",};
     ArrayList<String> friends_name = new ArrayList<String>();
+//    ArrayList<String> friends_name;
     private ArrayAdapter Fadapter;
     private ListView listview;
     ListActivity listActivity;
@@ -162,6 +163,8 @@ public class Frag1 extends Fragment {
 
         });
     }
+
+
 }
 
 
