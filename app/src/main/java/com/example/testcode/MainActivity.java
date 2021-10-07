@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -181,6 +182,18 @@ public class MainActivity extends AppCompatActivity {
 //                                    startActivity(intent);
 //                                    Toast.makeText(getApplicationContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show();
 //                                }
+
+                                SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("ar", loginResponse.ucAreaNo);
+                                editor.putString("di", loginResponse.ucDistribId);
+                                editor.putString("ag", loginResponse.ucAgencyId);
+                                editor.putString("me", loginResponse.ucMemCourId);
+                                editor.putString("id", loginResponse.acUserId);
+                                editor.putString("name", loginResponse.acRealName);
+                                editor.putString("ao", loginResponse.ucAgreeOption);
+                                editor.putString("tpo", loginResponse.ucThirdPartyOption);
+                                editor.commit();
 
                                 // Option 두 개의 Value값이 1이라면 이미 동의를 한 것.
                                 // 약관 동의를 마치면 Option이 1이 되게 하여 약관 동의 페이지를 생략하도록.

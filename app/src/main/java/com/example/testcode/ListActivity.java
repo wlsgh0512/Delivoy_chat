@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -93,6 +94,10 @@ public class ListActivity extends AppCompatActivity {
             case R.id.shared_settings:
                 Intent intent1 = new Intent(ListActivity.this, SettingActivity.class);
                 startActivity(intent1);
+                break;
+            case R.id.action_change_info:
+                Intent intent2 = new Intent(ListActivity.this, Change_info.class);
+                startActivity(intent2);
                 break;
             case R.id.action_logout:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

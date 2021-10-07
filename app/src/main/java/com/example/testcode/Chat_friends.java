@@ -10,21 +10,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.testcode.model.Chat_Response;
 import com.example.testcode.model.Code;
 import com.example.testcode.model.DataItem;
 import com.example.testcode.model.ErrorDto;
-import com.example.testcode.model.LoginResponse;
 import com.example.testcode.model.MyAdapter;
 import com.google.gson.Gson;
 
@@ -46,26 +42,27 @@ import okhttp3.Response;
  * 이유를 잘 모르겠어서 추가 검색 필요할 듯.
  */
 
-public class Chat extends AppCompatActivity {
+public class Chat_friends extends AppCompatActivity {
     String hostname = "222.239.254.253";
     RecyclerView recyvlerv;
-    EditText editText1;
+    EditText sendMsg;
     String msg = "";
     ArrayList<DataItem> dataList;
+    ActionBar actionBar;
 //    ArrayList<DataItem> dataList = new ArrayList<DataItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_chat_friends);
 
-        ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
-        actionBar.setTitle("채팅");  //액션바 제목설정
+        actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
+//        actionBar.setTitle("채팅");  //액션바 제목설정
         // 1:1이면 상대이름을 ,
         // multi면 그룹채팅 (참여인원) 카톡처럼.
 
-        editText1 = (EditText) findViewById(R.id.editText1);
-        msg = editText1.getText().toString();
+        sendMsg = (EditText) findViewById(R.id.sendMsg);
+        msg = sendMsg.getText().toString();
         recyvlerv = (RecyclerView)findViewById(R.id.recyvlerv);
 
         initializeData();
@@ -104,7 +101,7 @@ public class Chat extends AppCompatActivity {
              * 검색해서 초대(초성 포함) 구현하는 것이 목표.
              */
             case R.id.invite:
-                Intent intent = new Intent(Chat.this, Chat_invite_room.class);
+                Intent intent = new Intent(Chat_friends.this, Chat_invite_room.class);
                 startActivity(intent);
                 break;
 
@@ -120,7 +117,7 @@ public class Chat extends AppCompatActivity {
                 builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent1 = new Intent(Chat.this, ListActivity.class);
+                        Intent intent1 = new Intent(Chat_friends.this, ListActivity.class);
                         startActivity(intent1);
                     }
                 });
@@ -135,10 +132,10 @@ public class Chat extends AppCompatActivity {
     // 전송 버튼을 눌렀을 때
     public void onClick_sendmsg(View view) {
 
-         msg = editText1.getText().toString();
+         msg = sendMsg.getText().toString();
            dataList.add(new DataItem(msg, "사용자1", Code.ViewType.RIGHT_CONTENT));
            recyvlerv.scrollToPosition(dataList.size()-1);
-           editText1.setText("");
+           sendMsg.setText("");
 
         //
 //        talk_get();
@@ -200,7 +197,8 @@ public class Chat extends AppCompatActivity {
                             try {
 
                                 dataList.add(new DataItem(chat_response.acTalkMesg, chat_response.acRealName, Code.ViewType.LEFT_CONTENT));
-                                Toast.makeText(getApplicationContext(), "" + chat_response.acTalkMesg, Toast.LENGTH_SHORT).show();
+                                actionBar.setTitle(chat_response.acRealName);
+//                                Toast.makeText(getApplicationContext(), "" + chat_response.acTalkMesg, Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

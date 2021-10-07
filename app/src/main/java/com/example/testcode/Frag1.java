@@ -1,16 +1,18 @@
 package com.example.testcode;
 
-import android.content.Context;
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -47,6 +49,7 @@ public class Frag1 extends Fragment {
     private ListView listview;
     ListActivity listActivity;
     View view;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
 
     //    public static Context context_frag1;
     public Frag1() {
@@ -75,10 +78,17 @@ public class Frag1 extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> apterView, View view, int i, long l) {
 
-                Intent intent = new Intent(getActivity(), Chat.class);
+                Intent intent = new Intent(getActivity(), Chat_friends.class);
                 startActivity(intent);
             }
         });
+
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar","");
+        ucDistribId = sharedPreferences.getString("di","");
+        ucAgencyId = sharedPreferences.getString("ag","");
+        ucMemCourId = sharedPreferences.getString("me","");
+
 //        test();
         friends_name.add("asd");
         Friends_list();
@@ -100,10 +110,14 @@ public class Frag1 extends Fragment {
             TextView edtUserAreaNo = view.findViewById(R.id.edtUserAreaNo);
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) view.findViewById(R.id.edtUserAreaNo)).getText().toString());
-            urlBuilder.addQueryParameter("ucDistribId", ((TextView) view.findViewById(R.id.edtUserDistribId)).getText().toString());
-            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) view.findViewById(R.id.edtUserAgencyId)).getText().toString());
-            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) view.findViewById(R.id.edtUserCourId)).getText().toString());
+//            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) view.findViewById(R.id.edtUserAreaNo)).getText().toString());
+//            urlBuilder.addQueryParameter("ucDistribId", ((TextView) view.findViewById(R.id.edtUserDistribId)).getText().toString());
+//            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) view.findViewById(R.id.edtUserAgencyId)).getText().toString());
+//            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) view.findViewById(R.id.edtUserCourId)).getText().toString());
+            urlBuilder.addQueryParameter("ucAreaNo", ucAreaNo);
+            urlBuilder.addQueryParameter("ucDistribId", ucDistribId);
+            urlBuilder.addQueryParameter("ucAgencyId", ucAgencyId);
+            urlBuilder.addQueryParameter("ucMemCourId", ucMemCourId);
 
             Request request = new Request.Builder()
                     .url(urlBuilder.build().toString())
@@ -127,21 +141,18 @@ public class Frag1 extends Fragment {
                     } else {
                         // 응답 성공
                         Log.i("tag", "응답 성공");
-                        final String responseData = response.body().string();
-                        final FriendsResponse friendsResponse = new Gson().fromJson(responseData, FriendsResponse.class);
-                        final FriendsResponse.Items items = new Gson().fromJson(responseData, FriendsResponse.Items.class);
-                        final FriendsResponse.Root Root = new Gson().fromJson(responseData, FriendsResponse.Root.class);
+                        String responseData = response.body().string();
+                        FriendsResponse friendsResponse = new Gson().fromJson(responseData, FriendsResponse.class);
+                        FriendsResponse.Items items = new Gson().fromJson(responseData, FriendsResponse.Items.class);
+                        FriendsResponse.Root Root = new Gson().fromJson(responseData, FriendsResponse.Root.class);
 
                         getActivity().runOnUiThread(() -> {
                             try {
 
-                                friends_name.add(friendsResponse.acRealName);
+                                friends_name.add(friendsResponse.acRealName.toString());
+//                                Log.i("tag", friendsResponse.acRealName);
 
-                                Log.i("tag", friendsResponse.acRealName);
-
-//                                Fadapter.notifyDataSetChanged();
-
-                                Toast.makeText(getActivity().getApplicationContext(), "응답 : " + friendsResponse.acRealName, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity().getApplicationContext(), "Frag1  : " + friendsResponse.acRealName, Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

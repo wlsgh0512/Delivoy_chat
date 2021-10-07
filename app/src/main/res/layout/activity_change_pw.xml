@@ -4,87 +4,126 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <EditText
-        android:layout_marginTop="150dp"
-        android:id="@+id/input_id"
-        android:layout_width="250dp"
-        android:layout_height="48dp"
-        android:background="@drawable/memo_border"
-        android:layout_centerHorizontal="true"
-        android:hint="회원 ID" />
-
-    <EditText
-        android:id="@+id/input_phone"
-        android:layout_width="250dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/input_id"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/memo_border"
-        android:hint="휴대전화번호"
-        android:inputType="number"/>
-
-    <EditText
-        android:id="@+id/key"
-        android:layout_width="250dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/input_phone"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/memo_border"
-        android:hint="휴대전화 인증키"
-        android:inputType="number" />
-    <Button
-        android:id="@+id/key_check"
+    <TextView
+        android:id="@+id/tv_member_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/key"
-        android:layout_alignBaseline="@id/key"
-        android:text="인증"
-        android:onClick="onClick_change_pw"
-        />
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="회원 ID" />
 
-    <EditText
-        android:id="@+id/now_pw"
+    <TextView
+        android:id="@+id/member_num"
         android:layout_width="250dp"
         android:layout_height="48dp"
-        android:layout_below="@id/key"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/tv_member_id"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/memo_border"
-        android:hint="현재 PW"
-        android:inputType="number" />
-
+        android:textStyle="bold"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/tv_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/member_num"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="휴대전화번호" />
     <EditText
-        android:id="@+id/new_pw"
+        android:id="@+id/input_phone_number"
         android:layout_width="250dp"
         android:layout_height="48dp"
-        android:layout_below="@id/now_pw"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/tv_phone_number"
         android:background="@drawable/memo_border"
-        android:hint="신규 PW"
-        android:inputType="number" />
-
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:id="@+id/tv_key_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/input_phone_number"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="인증키" />
     <EditText
-        android:id="@+id/new_pw_check"
+        android:id="@+id/input_key"
         android:layout_width="250dp"
         android:layout_height="48dp"
-        android:layout_below="@id/new_pw"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/tv_key_check"
         android:background="@drawable/memo_border"
-        android:hint="PW 확인"
-        android:inputType="number" />
+        android:layout_centerHorizontal="true"/>
+    <Button
+        android:id="@+id/btn_key_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/input_key"
+        android:layout_toRightOf="@id/input_key"
+        android:onClick="onClick_key_check"
+        android:text="인증" />
 
+    <TextView
+        android:id="@+id/tv_now_pw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_key_check"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="현재 비밀번호" />
+
+    <EditText
+        android:id="@+id/input_now_pw"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_now_pw"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:inputType="textPassword" />
+    <TextView
+        android:id="@+id/tv_new_pw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/input_now_pw"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="신규 비밀번호" />
+
+    <EditText
+        android:id="@+id/input_new_pw"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_new_pw"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:inputType="textPassword" />
+    <TextView
+        android:id="@+id/tv_new_pw_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/input_new_pw"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="비밀번호 확인" />
+
+    <EditText
+        android:id="@+id/input_new_pw_check"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_new_pw_check"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/change_success"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/new_pw_check"
+        android:layout_below="@id/input_new_pw_check"
         android:layout_centerInParent="true"
         android:onClick="onClick_change_pw"
         android:text="완료" />

@@ -2,21 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.testcode">
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="채팅 프로그램"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.TestCode">
+        <activity
+            android:name=".Change_info"
+            android:exported="true" />
+        <activity
+            android:name=".Chat_room"
+            android:exported="true" />
         <activity
             android:name=".Chat_invite_main"
             android:exported="true"
-            android:parentActivityName=".Chat" />
+            android:parentActivityName=".Chat_friends" />
         <activity
             android:name=".WebViewActivity3"
             android:exported="true"
@@ -36,7 +43,7 @@
         <activity
             android:name=".Chat_invite_room"
             android:exported="true"
-            android:parentActivityName=".Chat" />
+            android:parentActivityName=".Chat_friends" />
         <activity
             android:name=".TextSize"
             android:exported="true"
@@ -46,7 +53,7 @@
             android:exported="true"
             android:parentActivityName=".SettingActivity" />
         <activity
-            android:name=".Chat"
+            android:name=".Chat_friends"
             android:exported="true"
             android:parentActivityName=".ListActivity" />
         <activity
@@ -56,7 +63,7 @@
         <activity
             android:name=".Find_id"
             android:exported="true"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".Find_pw"
             android:exported="true"

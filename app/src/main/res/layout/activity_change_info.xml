@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/member_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="회원 번호"
+        />
+
+    <TextView
+        android:id="@+id/input_member_num"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/member_num"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:gravity="center"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_member_num"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="사용자 ID" />
+
+    <TextView
+        android:id="@+id/input_user_id"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/user_id"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:gravity="center"
+        android:inputType="textEmailAddress"
+        android:textStyle="bold"/>
+
+
+    <TextView
+        android:id="@+id/tv_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_user_id"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="실명" />
+
+
+    <TextView
+        android:id="@+id/real_name"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_phone"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:gravity="center"
+        android:inputType="number"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/nickname"
+        android:layout_below="@id/real_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="별명" />
+
+    <EditText
+        android:id="@+id/input_nickname"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/nickname"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"/>
+
+    <TextView
+        android:id="@+id/phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_nickname"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="휴대전화번호" />
+
+    <EditText
+        android:id="@+id/input_phone_number"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/phone_number"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/key_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/input_phone_number"
+        android:layout_toRightOf="@id/input_phone_number"
+        android:onClick="onClick_check"
+        android:text="인증" />
+    <TextView
+        android:id="@+id/email_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_phone_number"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="이메일 주소" />
+
+    <EditText
+        android:id="@+id/input_email_address"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/email_address"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/authority"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/input_email_address"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/memo_border"
+        android:gravity="center"
+        android:text="일반 사용자" />
+
+    <Button
+        android:id="@+id/btn_search_pw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/authority"
+        android:layout_centerInParent="true"
+        android:onClick="onClick_finish"
+        android:text="확인" />
+
+</RelativeLayout>

@@ -1,13 +1,16 @@
 package com.example.testcode;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +25,6 @@ import android.widget.Toast;
 import com.example.testcode.model.Chat_room_Response;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
-import com.example.testcode.model.LoginResponse;
-import com.example.testcode.model.Login_id_Response;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -31,17 +32,15 @@ import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.HttpUrl;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
  * 채팅 탭 -> 참여중인 채팅 목록 조회.
  * ListView에 데이터 받아와서 .add()하는 식으로 구현하려 했으나 갱신 x.
+ * code 200인데 왜 chat_room_response 받아오는 값들이 null ??
  */
 
 public class Frag2 extends Fragment {
@@ -50,6 +49,7 @@ public class Frag2 extends Fragment {
     AlertDialog.Builder builder;
     ArrayList<String> item = new ArrayList<String>();
     EditText addboxdialog;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
 
     public Frag2() {
         // Required empty public constructor
@@ -62,6 +62,7 @@ public class Frag2 extends Fragment {
         View view = inflater.inflate(R.layout.fragment_frag2, container, false);
         addboxdialog = (EditText) view.findViewById(R.id.addboxdialog);
 
+
         ArrayAdapter Adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, item);
         ListView listview2 = (ListView) view.findViewById(R.id.listview2);
         listview2.setAdapter(Adapter);
@@ -71,13 +72,19 @@ public class Frag2 extends Fragment {
 //        item.add("박박박");
 //        item.add("최최최");
 
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar","");
+        ucDistribId = sharedPreferences.getString("di","");
+        ucAgencyId = sharedPreferences.getString("ag","");
+        ucMemCourId = sharedPreferences.getString("me","");
+
         Chat_room_list();
 
         // 채팅방을 클릭했을시 채팅창이 열리도록
         listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), Chat.class);
+                Intent intent = new Intent(getActivity(), Chat_friends.class);
                 startActivity(intent);
             }
         });
@@ -193,10 +200,15 @@ public class Frag2 extends Fragment {
             String url = String.format("http://%s/chatt/app/groups/group_fetch.php", hostname);
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) getView().findViewById(R.id.edtUserAreaNo)).getText().toString());
-            urlBuilder.addQueryParameter("ucDistribId", ((TextView) getView().findViewById(R.id.edtUserDistribId)).getText().toString());
-            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) getView().findViewById(R.id.edtUserAgencyId)).getText().toString());
-            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) getView().findViewById(R.id.edtUserCourId)).getText().toString());
+            urlBuilder.addQueryParameter("ucAreaNo", ucAreaNo);
+            urlBuilder.addQueryParameter("ucDistribId", ucDistribId);
+            urlBuilder.addQueryParameter("ucAgencyId", ucAgencyId);
+            urlBuilder.addQueryParameter("ucMemCourId", ucMemCourId);
+
+//            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) getView().findViewById(R.id.edtUserAreaNo)).getText().toString());
+//            urlBuilder.addQueryParameter("ucDistribId", ((TextView) getView().findViewById(R.id.edtUserDistribId)).getText().toString());
+//            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) getView().findViewById(R.id.edtUserAgencyId)).getText().toString());
+//            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) getView().findViewById(R.id.edtUserCourId)).getText().toString());
 
             Request request = new Request.Builder()
                     .url(urlBuilder.build().toString())
@@ -224,7 +236,12 @@ public class Frag2 extends Fragment {
                         getActivity().runOnUiThread(() -> {
                             try {
 
-                                Toast.makeText(getActivity().getApplicationContext(), "" + chat_room_response.uiRoomNo, Toast.LENGTH_SHORT).show();
+//                                item.add(chat_room_response.acRoomTitle);
+
+                                /**
+                                 * 왜 ListActivity에 진입하는 순간 이 토스트 메시지가 뜨지
+                                 */
+                                Toast.makeText(getActivity().getApplicationContext(), "Frag2" + chat_room_response.uiRoomNo, Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

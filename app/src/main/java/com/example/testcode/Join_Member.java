@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,7 @@ import okhttp3.Response;
  * 10/06 error code 416 발견 Response{protocol=http/1.1, code=416, message=Requested Range Not Satisfiable, url=http://222.239.254.253/chatt/app/users/user_post.php}
  * -> postman에 Value 값 넣어서 가입이 완료되는 것까지  확인.
  * 가입은 완료되는데 dialog 뜨기 전에 프로그램이 죽는 것 같아서 다시 확인 필요.
+ *
  */
 
 public class Join_Member extends AppCompatActivity {
@@ -140,6 +142,7 @@ public class Join_Member extends AppCompatActivity {
                         final Join_Response join_response = new Gson().fromJson(responseData, Join_Response.class);
                         runOnUiThread(() -> {
                             try {
+
                                 AlertDialog.Builder builder = new AlertDialog.Builder(Join_Member.this);
 
                                 builder.setTitle("회원가입이 완료되었습니다.").setMessage("코드 방식 : " + join_response.ucAreaNo + "-" +

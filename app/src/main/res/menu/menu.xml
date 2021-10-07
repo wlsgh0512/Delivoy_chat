@@ -12,6 +12,10 @@
         android:title="설정"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/action_change_info"
+        android:title="정보수정"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_logout"
         android:title="로그아웃"
         app:showAsAction="never"/>

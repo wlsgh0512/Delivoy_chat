@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -37,13 +38,16 @@ import okhttp3.Response;
  * MainActivity에서 ucAgreeOption , ucThirdPartyOption 값이 0인 경우 약관 동의 화면.
  * 체크박스 체크가 완료된 상태로 확인을 눌렀을 때 agreement() -> runOnUiThread에서
  * ucAgreeOption, ucThirdPartyOption 값을 0 -> 1로 바꾼다 ?
- * addFormDataPart에서 Option Value 값을 어떻게 넣을지 잘 모르겠습니다..
+ * addFormDataPart에서 Option Value 값을 어떻게 넣을지 잘 모르겠습니다.. -> 일단 SharedPreference로 ,,
+ * error code 500, logcat은 Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $
  */
 
 public class User_Consent extends AppCompatActivity {
     CheckBox checkBox, checkBox2, checkBox3;
     String hostname = "222.239.254.253";
     private String TAG = "이용약관 닫기";
+
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, AgreeOption, ThirPartyOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,9 @@ public class User_Consent extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
+//        Intent intent = getIntent();
+//        String aa = intent.getExtras().getString("ar");
+//        Toast.makeText(getApplicationContext(), "넘어온것 : " + aa, Toast.LENGTH_SHORT).show();
 
         setContentView(R.layout.activity_user_consent);
         // 전체동의
@@ -72,9 +79,13 @@ public class User_Consent extends AppCompatActivity {
         Button btn_agr2 = findViewById(R.id.btn_agr2);
         btn_agr2.setText(R.string.underlined_text);
 
-        if(checkBox.isChecked()) {
-        }
-
+        SharedPreferences sharedPreferences= getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar","");
+        ucDistribId = sharedPreferences.getString("di","");
+        ucAgencyId = sharedPreferences.getString("ag","");
+        ucMemCourId = sharedPreferences.getString("me","");
+        AgreeOption = sharedPreferences.getString("ao","");
+        ThirPartyOption = sharedPreferences.getString("tpo","");
 
         // 전체동의 클릭시
         // 전체 true / 전체 false 로 변경
@@ -169,14 +180,13 @@ public class User_Consent extends AppCompatActivity {
     public void onClick_user_consent(View view) {
         // 어차피 체크박스 2,3 중 하나라도 체크가 되어있지 않으면 체크박스1은 체크 x.
 
-
         if (!checkBox.isChecked()) {
-            return;
+            Toast.makeText(getApplicationContext(), "이용 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
         } else {
-            agreement();
+//            agreement();
 
-//            Intent intent = new Intent(User_Consent.this, ListActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(User_Consent.this, ListActivity.class);
+            startActivity(intent);
 
         }
     }
@@ -188,14 +198,14 @@ public class User_Consent extends AppCompatActivity {
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("ucAreaNo",((TextView) findViewById(R.id.edtUserAreaNo)).getText().toString())
-                    .addFormDataPart("ucDistribId",((TextView) findViewById(R.id.edtUserDistribId)).getText().toString())
-                    .addFormDataPart("ucAgencyId",((TextView) findViewById(R.id.edtUserAgencyId)).getText().toString())
-                    .addFormDataPart("ucMemCourId",((TextView) findViewById(R.id.edtUserCourId)).getText().toString())
+                    .addFormDataPart("ucAreaNo",ucAreaNo)
+                    .addFormDataPart("ucDistribId",ucDistribId)
+                    .addFormDataPart("ucAgencyId",ucAgencyId)
+                    .addFormDataPart("ucMemCourId",ucMemCourId)
 
                     // Value 값을 체크박스 체크 여부에 따라 받을수 있을지??
-                    .addFormDataPart("ucAgreeOption","1")
-                    .addFormDataPart("ucThirdPartyOption","1")
+                    .addFormDataPart("ucAgreeOption",AgreeOption)
+                    .addFormDataPart("ucThirdPartyOption",ThirPartyOption)
                     .build();
 
             Request request = new Request.Builder()
@@ -225,11 +235,11 @@ public class User_Consent extends AppCompatActivity {
 
                         runOnUiThread(() -> {
                             try {
-//                                user_consent_response.ucAgreeOption = "1";
-//                                user_consent_response.ucThirdPartyOption = "1";
+//                                if(!user_consent_response.ucAgreeOption.equals("1") && !user_consent_response.ucThirdPartyOption.equals("1")) {
+//                                    user_consent_response.ucAgreeOption.replace("0", "1");
+//                                    user_consent_response.ucThirdPartyOption.replace("0", "1");
+//                                }
                                 Toast.makeText(getApplicationContext(), "응답" + user_consent_response.acUserId, Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(User_Consent.this, ListActivity.class);
-                                            startActivity(intent);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

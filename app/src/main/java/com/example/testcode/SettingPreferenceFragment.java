@@ -1,5 +1,6 @@
 package com.example.testcode;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,7 +19,9 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
 import com.example.testcode.model.ErrorDto;
+import com.example.testcode.model.Join_Response;
 import com.example.testcode.model.LoginResponse;
+import com.example.testcode.model.Secession_Response;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -26,9 +29,15 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+
+/**
+ * settings_preference.xml -> 아이디 부분 summary에 어떻게 아이디 표현 ??
+ */
 
 public class SettingPreferenceFragment extends PreferenceFragment {
     SharedPreferences prefs;
@@ -37,7 +46,9 @@ public class SettingPreferenceFragment extends PreferenceFragment {
     ListPreference keywordSoundPreference;
     PreferenceScreen keywordScreen;
 
+
     String hostname = "222.239.254.253";
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, user_id, name;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +76,14 @@ public class SettingPreferenceFragment extends PreferenceFragment {
         }
 
         prefs.registerOnSharedPreferenceChangeListener(prefListener);
+
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", Context.MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+                ucAreaNo = sharedPreferences.getString("ar","");
+                ucDistribId = sharedPreferences.getString("di","");
+                ucAgencyId = sharedPreferences.getString("ag","");
+                ucMemCourId = sharedPreferences.getString("me","");
+                user_id = sharedPreferences.getString("id","");
+                name = sharedPreferences.getString("name","");
 
     }// onCreate
 
@@ -101,7 +120,7 @@ public class SettingPreferenceFragment extends PreferenceFragment {
 
         switch (key) {
             case "user_id":
-                
+//                user_id.setSummary("ar" + "-" + "di" + "-" + "ag" + "-" + "me");
                 break;
             case "user_pw":
                 Intent intent = new Intent(getActivity(), Change_pw.class);
@@ -112,43 +131,33 @@ public class SettingPreferenceFragment extends PreferenceFragment {
                 startActivity(intent1);
                 break;
             case "secession":
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("정말로 탈퇴하시겠습니까?\n탈퇴한 회원은 복구할 수 없습니다.")
-                        .setCancelable(true)
-                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                return;
-                            }
-                        });
-                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(getActivity(), "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
+                Member_secession();
                 break;
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
-    public void getOldLogin() {
+    public void Member_secession() {
         try {
             OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/login/login_no_get.php", hostname);
+            String url = String.format("http://%s/chatt/app/users/user_put.php", hostname);
 
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) getView().findViewById(R.id.edtUserAreaNo)).getText().toString());
-            urlBuilder.addQueryParameter("ucDistribId", ((TextView) getView().findViewById(R.id.edtUserDistribId)).getText().toString());
-            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) getView().findViewById(R.id.edtUserAgencyId)).getText().toString());
-            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) getView().findViewById(R.id.edtUserCourId)).getText().toString());
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("ucAreaNo", ucAreaNo)
+                    .addFormDataPart("ucDistribId",ucDistribId)
+                    .addFormDataPart("ucAgencyId",ucAgencyId)
+                    .addFormDataPart("ucMemCourId",ucMemCourId)
+                    .addFormDataPart("acUserId",user_id)
+                    .addFormDataPart("acPassword","11111111")
+                    .addFormDataPart("acRealName",name)
+                    .build();
 
             Request request = new Request.Builder()
-                    .url(urlBuilder.build().toString())
-                    .get()
+                    .url(url)
+                    .addHeader("Content-Type", "x-www-form-urlencoded")
+                    .post(requestBody)
                     .build();
 
             client.newCall(request).enqueue(new Callback() {
@@ -165,18 +174,30 @@ public class SettingPreferenceFragment extends PreferenceFragment {
                         // 응답 실패
                         Log.i("tag", "응답실패");
                     } else {
-
                         // 응답 성공
                         Log.i("tag", "응답 성공");
                         final String responseData = response.body().string();
-                        final LoginResponse loginResponse = new Gson().fromJson(responseData, LoginResponse.class);
+                        final Secession_Response secession_response = new Gson().fromJson(responseData, Secession_Response.class);
                         getActivity().runOnUiThread(() -> {
                             try {
-                                // 아이디 비밀번호 일치 시 로그인 성공하게 하는 조건?
-                                Toast.makeText(getActivity().getApplicationContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("정말로 탈퇴하시겠습니까?\n탈퇴한 회원은 복구할 수 없습니다.")
+                                        .setCancelable(true)
+                                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                return;
+                                            }
+                                        });
+                                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Toast.makeText(getActivity(), "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                });
+                                AlertDialog alert = builder.create();
+                                alert.show();
 
-//                                Toast.makeText(getApplicationContext(), "응답" + loginResponse.ucAreaNo + loginResponse.ucDistribId + loginResponse.ucAgencyId + loginResponse.ucMemCourId , Toast.LENGTH_SHORT).show();
-//                                Log.d("tag", loginResponse.ucAgencyId);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
