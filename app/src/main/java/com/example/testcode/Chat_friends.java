@@ -38,8 +38,9 @@ import okhttp3.Response;
  * 채팅창 화면.
  * response.body.string() 값 잘 받아오는것까지는 확인.
  * ArrayList에 add해서 채팅창에 갱신 확인.
- * 나오긴 하는데 화면에 진입했을 때 딱 안나오고 EditText를 한번 눌러야 나오는 상태.
- * 이유를 잘 모르겠어서 추가 검색 필요할 듯.
+ * 나오긴 하는데 화면에 진입했을 때 딱 안나오고 EditText를 한번 눌러야 나와서 (반응이 늦어서?)
+ * 추후 작업 필요.
+ * EditText를 눌렀을 때 마지막 채팅에 포커스가 맞춰지도록 .
  */
 
 public class Chat_friends extends AppCompatActivity {
@@ -117,6 +118,7 @@ public class Chat_friends extends AppCompatActivity {
                 builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
                         Intent intent1 = new Intent(Chat_friends.this, ListActivity.class);
                         startActivity(intent1);
                     }
@@ -132,13 +134,16 @@ public class Chat_friends extends AppCompatActivity {
     // 전송 버튼을 눌렀을 때
     public void onClick_sendmsg(View view) {
 
+        /**
+         * 여기서 talk_post.php
+         */
+
          msg = sendMsg.getText().toString();
            dataList.add(new DataItem(msg, "사용자1", Code.ViewType.RIGHT_CONTENT));
            recyvlerv.scrollToPosition(dataList.size()-1);
            sendMsg.setText("");
 
-        //
-//        talk_get();
+
     }
 
     /**

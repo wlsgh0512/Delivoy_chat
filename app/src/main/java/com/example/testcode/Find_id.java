@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.LoginResponse;
@@ -24,6 +25,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * EditText가 비어있을 때, EditText 값과 받는 값이 다를 때 조건 달아주기.
+ */
 public class Find_id extends AppCompatActivity {
     String hostname = "222.239.254.253";
     EditText input_phone_number, input_real_name;
@@ -34,7 +38,7 @@ public class Find_id extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_id);
         input_phone_number = (EditText) findViewById(R.id.input_phone_number);
-        input_real_name = (EditText)findViewById(R.id.input_real_name);
+        input_real_name = (EditText) findViewById(R.id.input_real_name);
         btn_find = (ImageButton) findViewById(R.id.btn_find);
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
@@ -45,16 +49,12 @@ public class Find_id extends AppCompatActivity {
     }
 
     public void onClick_find_id(View view) {
-        // tv_phone_number, input_phone_number , btn_find
+        if (input_real_name.getText().toString().isEmpty() || input_phone_number.getText().toString().isEmpty()) {
+            Toast.makeText(getApplicationContext(), "비어있는 항목을 작성해주세요.", Toast.LENGTH_SHORT).show();
+        }
+
         Find_id();
 
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//        builder.setTitle("회원님의 아이디는").setMessage("xxxxxxxxxxxxx입니다.");
-//
-//        AlertDialog alertDialog = builder.create();
-//
-//        alertDialog.show();
     }
 
     public void Find_id() {
@@ -92,17 +92,18 @@ public class Find_id extends AppCompatActivity {
                         final LoginResponse loginResponse = new Gson().fromJson(responseData, LoginResponse.class);
                         runOnUiThread(() -> {
                             try {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Find_id.this);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Find_id.this);
 
-                                builder.setTitle("회원님의 아이디는").setMessage("코드 방식 : " + loginResponse.ucAreaNo + "-" +
-                                        loginResponse.ucDistribId + "-" +
-                                        loginResponse.ucAgencyId + "-" +
-                                        loginResponse.ucMemCourId + " ,\n" +
-                                        "아이디 방식 : " + loginResponse.acUserId + " 입니다.");
+                                    builder.setTitle("회원님의 아이디는").setMessage("코드 방식 : "
+                                            + loginResponse.ucAreaNo + "-"
+                                            + loginResponse.ucDistribId + "-"
+                                            + loginResponse.ucAgencyId + "-"
+                                            + loginResponse.ucMemCourId + " ,\n"
+                                            + "아이디 방식 : " + loginResponse.acUserId + " 입니다.");
 
-                                AlertDialog alertDialog = builder.create();
+                                    AlertDialog alertDialog = builder.create();
 
-                                alertDialog.show();
+                                    alertDialog.show();
 //                                Toast.makeText(getApplicationContext(), "응답" + findidResponse.ucAreaNo, Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();

@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -67,10 +68,10 @@ public class Frag2 extends Fragment {
         ListView listview2 = (ListView) view.findViewById(R.id.listview2);
         listview2.setAdapter(Adapter);
 
-//        item.add("김김김");
-//        item.add("이이이");
-//        item.add("박박박");
-//        item.add("최최최");
+        item.add("김김김, 나나나");
+        item.add("이이이");
+        item.add("박박박");
+        item.add("최최최");
 
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
         ucAreaNo = sharedPreferences.getString("ar","");
@@ -95,7 +96,8 @@ public class Frag2 extends Fragment {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 builder = new AlertDialog.Builder(getActivity());
                 // 채팅에 참여중인 명단을 불러와서 settitle?
-                builder.setTitle("채팅방");
+                    builder.setTitle(item.get(pos));
+
                 builder.setItems(R.array.chat_long, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -115,6 +117,9 @@ public class Frag2 extends Fragment {
                                 builder.setNegativeButton("확인", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
+                                        /**
+                                         * 여기서 room_put.php
+                                         */
 
 //                                        Log.d("pjh",addboxdialog.getText().toString());
 //                                    int checked;
@@ -133,9 +138,11 @@ public class Frag2 extends Fragment {
                                 break;
                             case 1:
                                 // Listview 순서 바꿔주기 후 고정?
-                                Toast.makeText(getActivity(), "채팅방 상단 고정", Toast.LENGTH_SHORT).show();
                                 break;
                             case 2:
+                                /**
+                                 * 여기서 room_delete.php?
+                                 */
                                 // 나가기하면 listview 삭제 하면 될듯
                                 Toast.makeText(getActivity(), "채팅방 나가기", Toast.LENGTH_SHORT).show();
                                 break;

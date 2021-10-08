@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/write_name"
+        android:id="@+id/write_room_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="채팅방 이름을 입력하세요."/>
@@ -18,6 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="이름(초성), 전화번호 검색"/>
+
+<!--    이 밑으로 친구목록 조회 구현 예정-->
 
 
 

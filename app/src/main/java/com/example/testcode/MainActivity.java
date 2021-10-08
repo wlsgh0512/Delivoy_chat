@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                         ag = edtUserAgencyId.getText().toString();
                         me = edtUserCourId.getText().toString();
                         oldid = ar + di + ag + me;
-                        String asd = "1";
+
                         // 응답 성공
                         Log.i("tag", "응답 성공");
                         final String responseData = response.body().string();
@@ -206,10 +206,6 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     Toast.makeText(getApplicationContext(), "첫 로그인 시 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
                                 }
-
-
-//                                Toast.makeText(getApplicationContext(), "응답" + loginResponse.ucAreaNo + loginResponse.ucDistribId + loginResponse.ucAgencyId + loginResponse.ucMemCourId , Toast.LENGTH_SHORT).show();
-//                                Log.d("tag", loginResponse.ucAgencyId);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

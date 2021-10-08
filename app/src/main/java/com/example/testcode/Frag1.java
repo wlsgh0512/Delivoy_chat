@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 
@@ -54,6 +55,11 @@ public class Frag1 extends Fragment {
     //    public static Context context_frag1;
     public Frag1() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -149,7 +155,7 @@ public class Frag1 extends Fragment {
                         getActivity().runOnUiThread(() -> {
                             try {
 
-                                friends_name.add(friendsResponse.acRealName.toString());
+                                friends_name.add(friendsResponse.acRealName);
 //                                Log.i("tag", friendsResponse.acRealName);
 
                                 Toast.makeText(getActivity().getApplicationContext(), "Frag1  : " + friendsResponse.acRealName, Toast.LENGTH_SHORT).show();

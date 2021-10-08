@@ -138,38 +138,17 @@ public class User_Consent extends AppCompatActivity {
     }
 
     public void Onclick1(View view) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//        builder.setTitle("서비스 이용약관").setMessage("서비스 이용약관");
-//
-//        AlertDialog alertDialog = builder.create();
-//
-//        alertDialog.show();
         Intent intent1 = new Intent(getApplicationContext(), WebViewActivity1.class);
         startActivity(intent1);
 
     }
 
     public void Onclick2(View view) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//        builder.setTitle("위치기반 서비스 이용약관").setMessage("위치기반 서비스 이용약관");
-//
-//        AlertDialog alertDialog = builder.create();
-//
-//        alertDialog.show();
         Intent intent2 = new Intent(getApplicationContext(), WebViewActivity2.class);
         startActivity(intent2);
     }
 
     public void Onclick3(View view) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//        builder.setTitle("오픈뱅킹 서비스 이용약관").setMessage("오픈뱅킹 서비스 이용약관");
-//
-//        AlertDialog alertDialog = builder.create();
-//
-//        alertDialog.show();
         Intent intent3 = new Intent(getApplicationContext(), WebViewActivity3.class);
         startActivity(intent3);
     }
