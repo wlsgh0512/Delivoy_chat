@@ -56,7 +56,9 @@ public class ListActivity extends AppCompatActivity {
 
         //Adapter
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        final ViewPagerAdapter myPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 2);
+        final ViewPagerAdapter myPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        myPagerAdapter.addFragment(new Frag1());
+        myPagerAdapter.addFragment(new Frag2());
         viewPager.setAdapter(myPagerAdapter);
 
         //탭 선택 이벤트

@@ -17,32 +17,31 @@ import java.util.List;
  */
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    int mNumOfTabs; //탭의 갯수
-    Frag1 tab1;
-    Frag2 tab2;
+    private final List<Fragment> fragments = new ArrayList<>();
 
-    public ViewPagerAdapter(FragmentManager fm, int numTabs) {
+    public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
-        this.mNumOfTabs = numTabs;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0 :
-                tab1 = new Frag1();
-                return tab1;
+                return fragments.get(0);
             case 1:
-                tab2 = new Frag2();
-                return tab2;
+                return fragments.get(1);
             default:
                 return null;
         }
-        //return null;
     }
 
-    @Override
+    public void addFragment(Fragment fragment) {
+        fragments.add(fragment);
+    }
+
+
+        @Override
     public int getCount() {
-        return mNumOfTabs;
+        return fragments.size();
     }
 }
