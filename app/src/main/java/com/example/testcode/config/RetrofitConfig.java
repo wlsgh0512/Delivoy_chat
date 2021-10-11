@@ -1,7 +1,7 @@
 package com.example.testcode.config;
 
-import dagger.Component;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitConfig {
 
@@ -9,7 +9,8 @@ public class RetrofitConfig {
 
     public RetrofitConfig() {
         this.retrofit = new Retrofit.Builder()
-                .baseUrl("http://222.239.254.253/chatt/app")
+                .baseUrl("http://222.239.254.253/chatt/app/")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 

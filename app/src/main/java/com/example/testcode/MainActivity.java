@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.inject.Inject;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -65,10 +64,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-
+        setContentView(binding.getRoot());
         binding.rgLoginMethod.setOnCheckedChangeListener((radioGroup, id) -> {
             switch (radioGroup.getCheckedRadioButtonId()) {
                 case R.id.rb_old_login: {
