@@ -17,6 +17,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.databinding.ActivityMainBinding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.LoginResponse;
@@ -25,6 +27,8 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -86,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
             // 로그인 버튼을 눌렀을 때
             case R.id.btn_login:
                 switch (binding.rgLoginMethod.getCheckedRadioButtonId()) {
-                    case R.id.rb_old_login:
-                        getOldLogin();
-                        break;
                     case R.id.rb_user_id_login:
                         getUserIdLogin();
+                        break;
+                    case R.id.rb_old_login:
+                    default:
+                        getOldLogin();
                         break;
                 }
                 break;
@@ -115,108 +120,77 @@ public class MainActivity extends AppCompatActivity {
 
     public void getOldLogin() {
         try {
-            OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/login/login_no_get.php", hostname);
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.login(binding.edtUserAreaNo.getText().toString(),
+                    binding.edtUserDistribId.getText().toString(),
+                    binding.edtUserAgencyId.getText().toString(),
+                    binding.edtUserCourId.getText().toString(),
+                    binding.userPw.getText().toString())
+                    .enqueue(new retrofit2.Callback<LoginResponse>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<LoginResponse> call,
+                                               retrofit2.Response<LoginResponse> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final LoginResponse loginResponse = response.body();
+                                    SharedPreferences sharedPreferences = getSharedPreferences(
+                                            "test"
+                                            , MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("ar", loginResponse.ucAreaNo);
+                                    editor.putString("di", loginResponse.ucDistribId);
+                                    editor.putString("ag", loginResponse.ucAgencyId);
+                                    editor.putString("me", loginResponse.ucMemCourId);
+                                    editor.putString("id", loginResponse.acUserId);
+                                    editor.putString("name", loginResponse.acRealName);
+                                    editor.putString("ao", loginResponse.ucAgreeOption);
+                                    editor.putString("tpo", loginResponse.ucThirdPartyOption);
+                                    editor.commit();
 
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-            urlBuilder.addQueryParameter("ucAreaNo",
-                    binding.edtUserAreaNo.getText().toString());
-            urlBuilder.addQueryParameter("ucDistribId",
-                    binding.edtUserDistribId.getText().toString());
-            urlBuilder.addQueryParameter("ucAgencyId",
-                    binding.edtUserAgencyId.getText().toString());
-            urlBuilder.addQueryParameter("ucMemCourId",
-                    binding.edtUserCourId.getText().toString());
-            urlBuilder.addQueryParameter("acPassword",
-                    binding.userPw.getText().toString());
-
-            Request request = new Request.Builder()
-                    .url(urlBuilder.build().toString())
-                    .get()
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        final ErrorDto error = new Gson().fromJson(response.body().string(),
-                                ErrorDto.class);
-                        Log.i("tag", error.message);
-                        // 응답 실패
-                        Log.i("tag", "응답실패");
-                    } else {
-                        ar = binding.edtUserAreaNo.getText().toString();
-                        di = binding.edtUserDistribId.getText().toString();
-                        ag = binding.edtUserAgencyId.getText().toString();
-                        me = binding.edtUserCourId.getText().toString();
-                        oldid = ar + di + ag + me;
-
-                        // 응답 성공
-                        Log.i("tag", "응답 성공");
-                        final String responseData = response.body().string();
-                        final LoginResponse loginResponse = new Gson().fromJson(responseData,
-                                LoginResponse.class);
-                        runOnUiThread(() -> {
-                            try {
-                                // 아이디 비밀번호 일치 시 로그인 성공하게 하는 조건?
-                                //                                if (oldid.equals(loginResponse
-                                //                                .ucAreaNo + loginResponse
-                                //                                .ucDistribId + loginResponse
-                                //                                .ucAgencyId + loginResponse
-                                //                                .ucMemCourId)) {
-                                //                                    Intent intent = new Intent
-                                //                                    (MainActivity.this,
-                                //                                    User_Consent.class);
-                                //                                    startActivity(intent);
-                                //                                    Toast.makeText
-                                //                                    (getApplicationContext(),
-                                //                                    "로그인에 성공했습니다.", Toast
-                                //                                    .LENGTH_SHORT).show();
-                                //                                }
-
-                                SharedPreferences sharedPreferences = getSharedPreferences("test"
-                                        , MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("ar", loginResponse.ucAreaNo);
-                                editor.putString("di", loginResponse.ucDistribId);
-                                editor.putString("ag", loginResponse.ucAgencyId);
-                                editor.putString("me", loginResponse.ucMemCourId);
-                                editor.putString("id", loginResponse.acUserId);
-                                editor.putString("name", loginResponse.acRealName);
-                                editor.putString("ao", loginResponse.ucAgreeOption);
-                                editor.putString("tpo", loginResponse.ucThirdPartyOption);
-                                editor.commit();
-
-                                // Option 두 개의 Value값이 1이라면 이미 동의를 한 것.
-                                // 약관 동의를 마치면 Option이 1이 되게 하여 약관 동의 페이지를 생략하도록.
-                                if (loginResponse.ucAgreeOption.equals("1") && loginResponse.ucThirdPartyOption.equals("1")) {
-                                    Intent intent = new Intent(MainActivity.this,
-                                            ListActivity.class);
-                                    startActivity(intent);
-                                    Toast.makeText(getApplicationContext(), "로그인에 성공했습니다.",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Intent intent = new Intent(MainActivity.this,
-                                            User_Consent.class);
-                                    startActivity(intent);
-                                    Toast.makeText(getApplicationContext(), "첫 로그인 시 약관 동의가 필요합니다" +
-                                            ".", Toast.LENGTH_SHORT).show();
+                                    // Option 두 개의 Value값이 1이라면 이미 동의를 한 것.
+                                    // 약관 동의를 마치면 Option이 1이 되게 하여 약관 동의 페이지를 생략하도록.
+                                    if (loginResponse.ucAgreeOption.equals("1") && loginResponse.ucThirdPartyOption.equals("1")) {
+                                        Intent intent = new Intent(MainActivity.this,
+                                                ListActivity.class);
+                                        startActivity(intent);
+                                        Toast.makeText(getApplicationContext(), "로그인에 성공했습니다.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Intent intent = new Intent(MainActivity.this,
+                                                User_Consent.class);
+                                        startActivity(intent);
+                                        Toast.makeText(getApplicationContext(), "첫 로그인 시 약관 동의가 " +
+                                                "필요합니다" +
+                                                ".", Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                    }
-                }
-            });
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<LoginResponse> call, Throwable t) {
+
+                        }
+                    });
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
