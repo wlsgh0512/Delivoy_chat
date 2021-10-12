@@ -16,9 +16,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.ActivityJoinMemberBinding;
+import com.example.testcode.databinding.ActivityMainBinding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
 import com.example.testcode.model.Join_Response;
+import com.example.testcode.model.LoginResponse;
 import com.example.testcode.model.User_Consent_Response;
 import com.google.gson.Gson;
 
@@ -45,17 +50,17 @@ import okhttp3.Response;
 
 public class Join_Member extends AppCompatActivity {
     String hostname = "222.239.254.253";
-    TextView member_number, authority;
-    EditText join_id, join_pw, join_name, join_nickname, join_phone_number, join_mail;
-    Button btn_join;
     Spinner spinner;
     static final String[] USER_CHOICE = {"일반 사용자, 관리자, 본사"};
     ArrayAdapter<String> arrayAdapter;
 
+    private ActivityJoinMemberBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_join_member);
+        binding = ActivityJoinMemberBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
         actionBar.setTitle("회원가입");  //액션바 제목설정
@@ -66,17 +71,6 @@ public class Join_Member extends AppCompatActivity {
 
         //이 작업은 매니패스트에서 함
 
-        authority = (TextView) findViewById(R.id.authority);
-        join_id = (EditText) findViewById(R.id.join_id);
-        join_pw = (EditText) findViewById(R.id.join_pw);
-        join_name = (EditText) findViewById(R.id.join_name);
-        join_nickname = (EditText) findViewById(R.id.join_nickname);
-        join_phone_number = (EditText) findViewById(R.id.join_phone_number);
-        join_mail = (EditText) findViewById(R.id.join_mail);
-        btn_join = (Button) findViewById(R.id.btn_join);
-
-
-
     }
 
     public void onclick_join_member(View view) {
@@ -85,9 +79,78 @@ public class Join_Member extends AppCompatActivity {
 //        Intent intent = new Intent(Join_Member.this, MainActivity.class);
 //        startActivity(intent);
 
-        Join();
+        find_Id();
 
     }
+
+    public void find_Id() {
+        try {
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.join(binding.joinId.getText().toString(),
+                    binding.joinId.getText().toString(),
+                    binding.joinName.getText().toString(),
+                    binding.joinNickname.getText().toString(),
+                    binding.joinPhoneNumber.getText().toString(),
+                    binding.joinMail.getText().toString(),
+                    "0")
+                    .enqueue(new retrofit2.Callback<Join_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Join_Response> call,
+                                               retrofit2.Response<Join_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final Join_Response join_response = response.body();
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Join_Member.this);
+
+                                    builder.setTitle("회원님의 아이디는").setMessage("코드 방식 : "
+                                            + join_response.ucAreaNo + "-"
+                                            + join_response.ucDistribId + "-"
+                                            + join_response.ucAgencyId + "-"
+                                            + join_response.ucMemCourId + " ,\n"
+                                            + "아이디 방식 : " + join_response.acUserId + " 입니다.");
+
+                                    AlertDialog alertDialog = builder.create();
+
+                                    alertDialog.show();
+
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Join_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
 
     public void Join() {
         try {

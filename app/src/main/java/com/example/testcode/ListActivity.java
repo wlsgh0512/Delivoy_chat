@@ -6,32 +6,26 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
-import com.example.testcode.model.LoginResponse;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * 채팅 메인 화면
@@ -44,6 +38,8 @@ public class ListActivity extends AppCompatActivity {
     ViewPager viewpager;
     TabLayout tabs;
 
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +49,27 @@ public class ListActivity extends AppCompatActivity {
         tabs.addTab(tabs.newTab().setText("친구"));
         tabs.addTab(tabs.newTab().setText("채팅"));
         tabs.setTabGravity(tabs.GRAVITY_FILL);
+
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    Toast.makeText(ListActivity.this, "Tab 1", Toast.LENGTH_SHORT).show();
+                } else if (tab.getPosition() == 1) {
+                    Toast.makeText(ListActivity.this, "Tab 2", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         //Adapter
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -66,9 +83,15 @@ public class ListActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs));
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
-        actionBar.setTitle("친구");  //액션바 제목설정
+        actionBar.setTitle("채팅");  //액션바 제목설정
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
+
+        SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
 
     }
 
@@ -81,7 +104,6 @@ public class ListActivity extends AppCompatActivity {
     }
 
 
-
     // 우측 상단 새로운 채팅방 만들기, 설정
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -89,7 +111,7 @@ public class ListActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.create_chat:
-                Intent intent = new Intent(ListActivity.this, Chat_invite_main.class);
+                Intent intent = new Intent(ListActivity.this, Create_chatroom.class);
                 startActivity(intent);
                 // 채팅방 만드는 화면 넣을것
                 break;
@@ -126,61 +148,49 @@ public class ListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    public void Friends_list() {
+    public void Friends_list1() {
         try {
-            OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/friends/friend_fetch.php", hostname);
-
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) findViewById(R.id.edtUserAreaNo)).getText().toString());
-            urlBuilder.addQueryParameter("ucDistribId", ((TextView) findViewById(R.id.edtUserDistribId)).getText().toString());
-            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) findViewById(R.id.edtUserAgencyId)).getText().toString());
-            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) findViewById(R.id.edtUserCourId)).getText().toString());
-
-            Request request = new Request.Builder()
-                    .url(urlBuilder.build().toString())
-                    .get()
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        final ErrorDto error = new Gson().fromJson(response.body().string(), ErrorDto.class);
-                        Log.i("tag", error.message);
-                        // 응답 실패
-                        Log.i("tag", "응답실패");
-                    } else {
-                        // 응답 성공
-                        Log.i("tag", "응답 성공");
-                        final String responseData = response.body().string();
-                        final FriendsResponse friendsResponse = new Gson().fromJson(responseData, FriendsResponse.class);
-                        final FriendsResponse.Items items = new Gson().fromJson(responseData, FriendsResponse.Items.class);
-                        final FriendsResponse.Root Root = new Gson().fromJson(responseData, FriendsResponse.Root.class);
-
-                        runOnUiThread(() -> {
-                            try {
-                                item.add(friendsResponse.acRealName);
-
-                                Log.i("tag", friendsResponse.acRealName);
-
-//                                Fadapter.notifyDataSetChanged();
-
-                                Toast.makeText(getApplicationContext(), "응답 : " + friendsResponse.acRealName, Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                e.printStackTrace();
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.friend(ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId)
+                    .enqueue(new retrofit2.Callback<FriendsResponse>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<FriendsResponse> call,
+                                               retrofit2.Response<FriendsResponse> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final FriendsResponse friendsResponse = response.body();
+                                    item.add(friendsResponse.acRealName);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                    } // end of else
-                } // end of onResponse
-            });   // end of callback
-        } catch (Exception e) {}
-    }             // end of method
 
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<FriendsResponse> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

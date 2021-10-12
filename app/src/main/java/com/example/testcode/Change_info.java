@@ -13,8 +13,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.ActivityChangeInfoBinding;
+import com.example.testcode.databinding.ActivityFindIdBinding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.Join_Response;
+import com.example.testcode.model.LoginResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -39,38 +44,34 @@ import okhttp3.Response;
 
 public class Change_info extends AppCompatActivity {
     String hostname = "222.239.254.253";
-    TextView input_member_num, input_user_id,  real_name, authority;
-    EditText input_nickname, input_phone_number, input_email_address;
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, user_id, name;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, user_id, name, uc;
+
+    private ActivityChangeInfoBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_info);
+        binding = ActivityChangeInfoBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
         actionBar.setTitle("정보 수정");  //액션바 제목설정
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
-        input_member_num = (TextView)findViewById(R.id.input_member_num);
-        input_user_id = (TextView)findViewById(R.id.input_user_id);
-        real_name = (TextView)findViewById(R.id.real_name);
+        SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
+        user_id = sharedPreferences.getString("id", "");
+        name = sharedPreferences.getString("name", "");
+        uc = sharedPreferences.getString("uc", "");
 
-        input_nickname = (EditText) findViewById(R.id.input_nickname);
-        input_phone_number = (EditText) findViewById(R.id.input_phone_number);
-        input_email_address = (EditText) findViewById(R.id.input_email_address);
 
-        SharedPreferences sharedPreferences= getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-        ucAreaNo = sharedPreferences.getString("ar","");
-        ucDistribId = sharedPreferences.getString("di","");
-        ucAgencyId = sharedPreferences.getString("ag","");
-        ucMemCourId = sharedPreferences.getString("me","");
-        user_id = sharedPreferences.getString("id","");
-        name = sharedPreferences.getString("name","");
-
-        input_member_num.setText(ucAreaNo + "-" + ucDistribId + "-" + ucAgencyId + "-" + ucMemCourId);
-        input_user_id.setText(user_id);
-        real_name.setText(name);
+        binding.inputMemberNum.setText(ucAreaNo + "-" + ucDistribId + "-" + ucAgencyId + "-" + ucMemCourId);
+        binding.inputUserId.setText(user_id);
+        binding.realName.setText(name);
     }
 
     // 휴대전화 인증
@@ -84,8 +85,66 @@ public class Change_info extends AppCompatActivity {
     }
 
 
-
     public void Change_user_info() {
+        try {
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+
+            service.change(ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId,
+                    binding.inputNickname.getText().toString(),
+                    binding.inputPhoneNumber.getText().toString(),
+                    binding.inputEmailAddress.getText().toString(),
+                    uc)
+
+                    .enqueue(new retrofit2.Callback<Join_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Join_Response> call,
+                                               retrofit2.Response<Join_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final Join_Response join_response = response.body();
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Change_info.this);
+
+                                    builder.setTitle("정보 수정이 완료되었습니다.");
+
+                                    AlertDialog alertDialog = builder.create();
+
+                                    alertDialog.show();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Join_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void Change_user_info1() {
         try {
             OkHttpClient client = new OkHttpClient();
             String url = String.format("http://%s/chatt/app/users/user_put.php", hostname);
@@ -93,13 +152,13 @@ public class Change_info extends AppCompatActivity {
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("ucAreaNo", ucAreaNo)
-                    .addFormDataPart("ucDistribId",ucDistribId)
-                    .addFormDataPart("ucAgencyId",ucAgencyId)
-                    .addFormDataPart("ucMemCourId",ucMemCourId)
-                    .addFormDataPart("acNickName",input_nickname.getText().toString())
-                    .addFormDataPart("acCellNo",input_phone_number.getText().toString())
-                    .addFormDataPart("acEmailAddress",input_email_address.getText().toString())
-                    .addFormDataPart("ucAccessFlag","0")
+                    .addFormDataPart("ucDistribId", ucDistribId)
+                    .addFormDataPart("ucAgencyId", ucAgencyId)
+                    .addFormDataPart("ucMemCourId", ucMemCourId)
+                    .addFormDataPart("acNickName", binding.inputNickname.getText().toString())
+                    .addFormDataPart("acCellNo", binding.inputPhoneNumber.getText().toString())
+                    .addFormDataPart("acEmailAddress", binding.inputEmailAddress.getText().toString())
+                    .addFormDataPart("ucAccessFlag", "0")
                     .build();
 
             Request request = new Request.Builder()
@@ -148,7 +207,6 @@ public class Change_info extends AppCompatActivity {
 
         }
     }
-
 
 
 }

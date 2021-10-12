@@ -22,6 +22,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.FragmentFrag1Binding;
+import com.example.testcode.databinding.FragmentFrag2Binding;
 import com.example.testcode.model.Chat_room_Response;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
@@ -48,9 +52,10 @@ public class Frag2 extends Fragment {
     String hostname = "222.239.254.253";
     static final String[] LIST_MENU = {"김김김", "이이이", "박박박"};
     AlertDialog.Builder builder;
-    ArrayList<String> item = new ArrayList<String>();
-    EditText addboxdialog;
+    ArrayList<String> room_list = new ArrayList<String>();
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+
+    FragmentFrag2Binding binding;
 
     public Frag2() {
         // Required empty public constructor
@@ -60,44 +65,43 @@ public class Frag2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_frag2, container, false);
-        addboxdialog = (EditText) view.findViewById(R.id.addboxdialog);
 
+        binding = FragmentFrag2Binding.inflate(getLayoutInflater());
 
-        ArrayAdapter Adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, item);
-        ListView listview2 = (ListView) view.findViewById(R.id.listview2);
-        listview2.setAdapter(Adapter);
+        ArrayAdapter Adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, room_list);
+        binding.listview2.setAdapter(Adapter);
 
-        item.add("김김김, 나나나");
-        item.add("이이이");
-        item.add("박박박");
-        item.add("최최최");
+        room_list.add("김김김, 나나나");
+//        item.add("이이이");
+//        item.add("박박박");
+//        item.add("최최최");
 
-        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-        ucAreaNo = sharedPreferences.getString("ar","");
-        ucDistribId = sharedPreferences.getString("di","");
-        ucAgencyId = sharedPreferences.getString("ag","");
-        ucMemCourId = sharedPreferences.getString("me","");
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
 
         Chat_room_list();
 
         // 채팅방을 클릭했을시 채팅창이 열리도록
-        listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), Chat_friends.class);
-                startActivity(intent);
+
+                Chat_room_list();
+//                Intent intent = new Intent(getActivity(), Chat_friends.class);
+//                startActivity(intent);
             }
         });
 
         // 채팅방을 롱클릭했을시 이름 변경, 상단 고정, 나가기 중 택1
-        listview2.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        binding.listview2.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 builder = new AlertDialog.Builder(getActivity());
                 // 채팅에 참여중인 명단을 불러와서 settitle?
-                    builder.setTitle(item.get(pos));
-
+                builder.setTitle(room_list.get(pos));
                 builder.setItems(R.array.chat_long, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -155,7 +159,7 @@ public class Frag2 extends Fragment {
             }
         });
 
-        return view;
+        return binding.getRoot();
     }
 
     public void showDialog() {
@@ -202,6 +206,55 @@ public class Frag2 extends Fragment {
     }
 
     public void Chat_room_list() {
+        try {
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.rooms(ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId)
+                    .enqueue(new retrofit2.Callback<Chat_room_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Chat_room_Response> call,
+                                               retrofit2.Response<Chat_room_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    // response.body() null만 들어옴.
+                                    final Chat_room_Response chat_room_response = response.body();
+                                    Toast.makeText(getActivity().getApplicationContext(), "Frag2" + chat_room_response.uiRoomNo, Toast.LENGTH_SHORT).show();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Chat_room_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void Chat_room_list1() {
         try {
             OkHttpClient client = new OkHttpClient();
             String url = String.format("http://%s/chatt/app/groups/group_fetch.php", hostname);

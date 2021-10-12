@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -20,9 +21,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.ActivityMainBinding;
+import com.example.testcode.databinding.FragmentFrag1Binding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
+import com.example.testcode.model.Join_Response;
+import com.example.testcode.model.LoginResponse;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,19 +48,16 @@ import okhttp3.Response;
  * 친구 탭 -> 친구 목록 조회.
  * ListView에 데이터 받아와서 .add()하는 식으로 구현하려 했으나 갱신 x.
  * Fragment 사용.
- * addQueryParameter 부분이 의심..
+ * onResponse에서 response.body()가 null
+ * json 데이터의 객체는 {} , 배열은 [].
  */
 
 public class Frag1 extends Fragment {
-    String hostname = "222.239.254.253";
-    static final String[] LIST_MENU = {"가가가", "나나나", "다다다", "라라라", "마마마", "바바바", "사사사",};
     ArrayList<String> friends_name = new ArrayList<String>();
-//    ArrayList<String> friends_name;
     private ArrayAdapter Fadapter;
-    private ListView listview;
-    ListActivity listActivity;
-    View view;
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+
+    FragmentFrag1Binding binding;
 
     //    public static Context context_frag1;
     public Frag1() {
@@ -65,27 +72,30 @@ public class Frag1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding = FragmentFrag1Binding.inflate(getLayoutInflater());
 
+//        Friends_list();
+//        friends_name.add("asd");
+//        test();
+        return binding.getRoot();
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_frag1, container, false);
-        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listview = (ListView) view.findViewById(R.id.listview1);
         Fadapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, friends_name);
-        listview.setAdapter(Fadapter);
+        binding.listview.setAdapter(Fadapter);
 
         // listview를 클릭했을 때 채팅방으로 넘어가도록,,
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> apterView, View view, int i, long l) {
 
-                Intent intent = new Intent(getActivity(), Chat_friends.class);
-                startActivity(intent);
+                Friends_list();
+//                Intent intent = new Intent(getActivity(), Chat_friends.class);
+//                startActivity(intent);
             }
         });
 
@@ -97,79 +107,59 @@ public class Frag1 extends Fragment {
 
 //        test();
         friends_name.add("asd");
-        Friends_list();
 
-//        Toast.makeText(getActivity().getApplicationContext(), "응답 : ", Toast.LENGTH_SHORT).show();
-//        Fadapter.notifyDataSetChanged();
+//        Friends_list();
 
     }
 
-
-
-
     public void Friends_list() {
-
         try {
-            OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/friends/friend_fetch.php", hostname);
-
-            TextView edtUserAreaNo = view.findViewById(R.id.edtUserAreaNo);
-
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-//            urlBuilder.addQueryParameter("ucAreaNo", ((TextView) view.findViewById(R.id.edtUserAreaNo)).getText().toString());
-//            urlBuilder.addQueryParameter("ucDistribId", ((TextView) view.findViewById(R.id.edtUserDistribId)).getText().toString());
-//            urlBuilder.addQueryParameter("ucAgencyId", ((TextView) view.findViewById(R.id.edtUserAgencyId)).getText().toString());
-//            urlBuilder.addQueryParameter("ucMemCourId", ((TextView) view.findViewById(R.id.edtUserCourId)).getText().toString());
-            urlBuilder.addQueryParameter("ucAreaNo", ucAreaNo);
-            urlBuilder.addQueryParameter("ucDistribId", ucDistribId);
-            urlBuilder.addQueryParameter("ucAgencyId", ucAgencyId);
-            urlBuilder.addQueryParameter("ucMemCourId", ucMemCourId);
-
-            Request request = new Request.Builder()
-                    .url(urlBuilder.build().toString())
-                    .get()
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getActivity().getApplicationContext(), "응답2", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        final ErrorDto error = new Gson().fromJson(response.body().string(), ErrorDto.class);
-                        Log.i("tag", error.message);
-                        // 응답 실패
-                        Log.i("tag", "응답실패");
-                    } else {
-                        // 응답 성공
-                        Log.i("tag", "응답 성공");
-                        String responseData = response.body().string();
-                        FriendsResponse friendsResponse = new Gson().fromJson(responseData, FriendsResponse.class);
-                        FriendsResponse.Items items = new Gson().fromJson(responseData, FriendsResponse.Items.class);
-                        FriendsResponse.Root Root = new Gson().fromJson(responseData, FriendsResponse.Root.class);
-
-                        getActivity().runOnUiThread(() -> {
-                            try {
-
-                                friends_name.add(friendsResponse.acRealName);
-//                                Log.i("tag", friendsResponse.acRealName);
-
-                                Toast.makeText(getActivity().getApplicationContext(), "Frag1  : " + friendsResponse.acRealName, Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                e.printStackTrace();
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.friend(
+//                    ucAreaNo,
+//                    ucDistribId,
+//                    ucAgencyId,
+//                    ucMemCourId
+                    "88","17","1","1"
+            )
+                    .enqueue(new retrofit2.Callback<FriendsResponse>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<FriendsResponse> call,
+                                               retrofit2.Response<FriendsResponse> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final FriendsResponse friendsResponse = response.body();
+                                    friends_name.add(friendsResponse.acRealName);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                    } // end of else
-                } // end of onResponse
-            });   // end of callback
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<FriendsResponse> call, Throwable t) {
+
+                        }
+                    });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }             // end of method
+    }
 
     public void test() {
         getActivity().runOnUiThread(() -> {

@@ -18,6 +18,8 @@ import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.Join_Response;
 import com.example.testcode.model.LoginResponse;
@@ -139,75 +141,54 @@ public class SettingPreferenceFragment extends PreferenceFragment {
     }
 
     public void Member_secession() {
-        try {
-            OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/users/user_put.php", hostname);
 
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("ucAreaNo", ucAreaNo)
-                    .addFormDataPart("ucDistribId",ucDistribId)
-                    .addFormDataPart("ucAgencyId",ucAgencyId)
-                    .addFormDataPart("ucMemCourId",ucMemCourId)
-                    .addFormDataPart("acUserId",user_id)
-                    .addFormDataPart("acPassword","11111111")
-                    .addFormDataPart("acRealName",name)
-                    .build();
+                try {
+                    LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+                    service.secession(ucAreaNo,
+                            ucDistribId,
+                            ucAgencyId,
+                            ucMemCourId,
+                            user_id,
+                            "11111111",
+                            name)
+                            .enqueue(new retrofit2.Callback<Secession_Response>() {
+                                @Override
+                                public void onResponse(retrofit2.Call<Secession_Response> call,
+                                                       retrofit2.Response<Secession_Response> response) {
+                                    if (response.isSuccessful()) {
+                                        // 응답 성공
+                                        Log.i("tag", "응답 성공");
+                                        try {
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("Content-Type", "x-www-form-urlencoded")
-                    .post(requestBody)
-                    .build();
+                                            Toast.makeText(getActivity(), "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+                                        final ErrorDto error;
+                                        try {
+                                            error = new Gson().fromJson(response.errorBody().string(),
+                                                    ErrorDto.class);
+                                            Log.i("tag", error.message);
+                                            // 응답 실패
+                                            Log.i("tag", "응답실패");
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onFailure(retrofit2.Call<Secession_Response> call, Throwable t) {
+
+                                }
+                            });
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        final ErrorDto error = new Gson().fromJson(response.body().string(), ErrorDto.class);
-                        Log.i("tag", error.message);
-                        // 응답 실패
-                        Log.i("tag", "응답실패");
-                    } else {
-                        // 응답 성공
-                        Log.i("tag", "응답 성공");
-                        final String responseData = response.body().string();
-                        final Secession_Response secession_response = new Gson().fromJson(responseData, Secession_Response.class);
-                        getActivity().runOnUiThread(() -> {
-                            try {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage("정말로 탈퇴하시겠습니까?\n탈퇴한 회원은 복구할 수 없습니다.")
-                                        .setCancelable(true)
-                                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                return;
-                                            }
-                                        });
-                                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Toast.makeText(getActivity(), "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                });
-                                AlertDialog alert = builder.create();
-                                alert.show();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-
-        }
     }
 }

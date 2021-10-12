@@ -9,36 +9,49 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.testcode.api.LoginService;
 import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.model.Chat_invite_room_Response;
+import com.example.testcode.model.Create_chat_Response;
 import com.example.testcode.model.ErrorDto;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
- * 채팅창 화면 (Chat)에서 우측 상단 새로운 채팅방 만들기 버튼.
- * 내비게이션 드로어를 넣어서 카카오톡 방식으로 서랍식 구현 할 예정.
+ * 채팅 메인 화면 (ListActivity)에서 우측 상단 새로운 채팅방 만들기 버튼.
  */
 
-public class Chat_invite_room extends AppCompatActivity {
+public class Create_chatroom extends AppCompatActivity {
     String hostname = "222.239.254.253";
+    EditText write_room_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_invite);
+        setContentView(R.layout.activity_chat_invite_main);
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
-        actionBar.setTitle("대화상대 초대");  //액션바 제목설정
+        actionBar.setTitle("새로운 채팅방 만들기");  //액션바 제목설정
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
+        write_room_name = (EditText) findViewById(R.id.write_room_name);
+
 //        Frag1 frag1 = new Frag1();
-//
+
 //        frag1.getContext();
 
     }
@@ -55,28 +68,28 @@ public class Chat_invite_room extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.create_chat:
-                Chat_invite_room();
+                create_chat();
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void Chat_invite_room() {
+    public void create_chat() {
         try {
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
-            service.room_invite("1", "88", "17", "1", "1")
-                    .enqueue(new retrofit2.Callback<Chat_invite_room_Response>() {
+            service.Create_chat("1", "")
+                    .enqueue(new retrofit2.Callback<Create_chat_Response>() {
                         @Override
-                        public void onResponse(retrofit2.Call<Chat_invite_room_Response> call,
-                                               retrofit2.Response<Chat_invite_room_Response> response) {
+                        public void onResponse(retrofit2.Call<Create_chat_Response> call,
+                                               retrofit2.Response<Create_chat_Response> response) {
                             if (response.isSuccessful()) {
                                 // 응답 성공
                                 Log.i("tag", "응답 성공");
                                 try {
-                                    final Chat_invite_room_Response chat_invite_room_response = response.body();
+                                    final Create_chat_Response create_chat_response = response.body();
 
-                                    Toast.makeText(getApplicationContext(), "초대가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "채팅방이 생성되었습니다.", Toast.LENGTH_SHORT).show();
 
 
                                 } catch (Exception e) {
@@ -98,7 +111,7 @@ public class Chat_invite_room extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(retrofit2.Call<Chat_invite_room_Response> call, Throwable t) {
+                        public void onFailure(retrofit2.Call<Create_chat_Response> call, Throwable t) {
 
                         }
                     });

@@ -1,6 +1,6 @@
 package com.example.testcode.model;
 
-public class Chat_invite_main_Response {
+public class Create_chat_Response {
     public int code;
     public String funcCode;
     public String acRoomTitle;

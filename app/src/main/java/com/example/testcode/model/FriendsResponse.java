@@ -12,7 +12,7 @@ public class FriendsResponse {
     public String acCellNo;
     public String acEmailAddress;
     public String ucAccessFlag;
-
+//}
 
     public class Items {
         public List<FriendsResponse> friends;

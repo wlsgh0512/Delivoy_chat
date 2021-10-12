@@ -21,7 +21,7 @@
             android:name=".Chat_room"
             android:exported="true" />
         <activity
-            android:name=".Chat_invite_main"
+            android:name=".Create_chatroom"
             android:exported="true"
             android:parentActivityName=".Chat_friends" />
         <activity

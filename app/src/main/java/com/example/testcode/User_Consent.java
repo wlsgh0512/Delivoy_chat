@@ -15,7 +15,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.ActivityFindIdBinding;
+import com.example.testcode.databinding.ActivityUserConsentBinding;
 import com.example.testcode.model.ErrorDto;
+import com.example.testcode.model.FriendsResponse;
 import com.example.testcode.model.LoginResponse;
 import com.example.testcode.model.User_Consent_Response;
 import com.google.gson.Gson;
@@ -38,38 +43,27 @@ import okhttp3.Response;
  * MainActivity에서 ucAgreeOption , ucThirdPartyOption 값이 0인 경우 약관 동의 화면.
  * 체크박스 체크가 완료된 상태로 확인을 눌렀을 때 agreement() -> runOnUiThread에서
  * ucAgreeOption, ucThirdPartyOption 값을 0 -> 1로 바꾼다 ?
- * addFormDataPart에서 Option Value 값을 어떻게 넣을지 잘 모르겠습니다.. -> 일단 SharedPreference로 ,,
- * error code 500, logcat은 Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $
+ * error code 500, Logcat은 Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $
  */
 
 public class User_Consent extends AppCompatActivity {
     CheckBox checkBox, checkBox2, checkBox3;
-    String hostname = "222.239.254.253";
     private String TAG = "이용약관 닫기";
 
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, AgreeOption, ThirPartyOption;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, AgreeOption, ThirdPartyOption;
+
+    ActivityUserConsentBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityUserConsentBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
         actionBar.setTitle("이용약관 동의");  //액션바 제목설정
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
-
-//        Intent intent = getIntent();
-//        String aa = intent.getExtras().getString("ar");
-//        Toast.makeText(getApplicationContext(), "넘어온것 : " + aa, Toast.LENGTH_SHORT).show();
-
-        setContentView(R.layout.activity_user_consent);
-        // 전체동의
-        checkBox = findViewById(R.id.checkbox);
-        // 서비스
-        checkBox2 = findViewById(R.id.checkbox2);
-        // 위치기반
-        checkBox3 = findViewById(R.id.checkbox3);
-        // 오픈뱅킹
 
         // 이용약관 버튼1 - 서비스
         Button btn_agr = findViewById(R.id.btn_agr);
@@ -79,51 +73,51 @@ public class User_Consent extends AppCompatActivity {
         Button btn_agr2 = findViewById(R.id.btn_agr2);
         btn_agr2.setText(R.string.underlined_text);
 
-        SharedPreferences sharedPreferences= getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-        ucAreaNo = sharedPreferences.getString("ar","");
-        ucDistribId = sharedPreferences.getString("di","");
-        ucAgencyId = sharedPreferences.getString("ag","");
-        ucMemCourId = sharedPreferences.getString("me","");
-        AgreeOption = sharedPreferences.getString("ao","");
-        ThirPartyOption = sharedPreferences.getString("tpo","");
+        SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
+        AgreeOption = sharedPreferences.getString("ao", "");
+        ThirdPartyOption = sharedPreferences.getString("tpo", "");
 
         // 전체동의 클릭시
         // 전체 true / 전체 false 로 변경
-        checkBox.setOnClickListener(new View.OnClickListener() {
+        binding.checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox.isChecked()) {
-                    checkBox2.setChecked(true);
-                    checkBox3.setChecked(true);
+                if (binding.checkbox.isChecked()) {
+                    binding.checkbox2.setChecked(true);
+                    binding.checkbox3.setChecked(true);
                 } else {
-                    checkBox2.setChecked(false);
-                    checkBox3.setChecked(false);
+                    binding.checkbox2.setChecked(false);
+                    binding.checkbox3.setChecked(false);
                 }
             }
         });
 
         // 2번째 체크박스 클릭
-        checkBox2.setOnClickListener(new View.OnClickListener() {
+        binding.checkbox2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //만약 전체 클릭이 true 라면 false로 변경
-                if (checkBox.isChecked()) {
-                    checkBox.setChecked(false);
+                if (binding.checkbox.isChecked()) {
+                    binding.checkbox.setChecked(false);
                     //각 체크박스 체크 여부 확인해서  전체동의 체크박스 변경
-                } else if (checkBox2.isChecked() && checkBox3.isChecked()) {
-                    checkBox.setChecked(true);
+                } else if (binding.checkbox2.isChecked() && binding.checkbox3.isChecked()) {
+                    binding.checkbox.setChecked(true);
                 }
             }
         });
 
         // 3번째 체크박스 클릭
-        checkBox3.setOnClickListener(new View.OnClickListener() {
+        binding.checkbox3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox.isChecked()) {
-                    checkBox.setChecked(false);
-                } else if (checkBox2.isChecked() && checkBox3.isChecked()) {
-                    checkBox.setChecked(true);
+                if (binding.checkbox.isChecked()) {
+                    binding.checkbox.setChecked(false);
+                } else if (binding.checkbox2.isChecked() && binding.checkbox3.isChecked()) {
+                    binding.checkbox.setChecked(true);
                 }
             }
         });
@@ -131,7 +125,7 @@ public class User_Consent extends AppCompatActivity {
 
     private boolean ischecked(CheckBox checkBox, CheckBox checkBox2, CheckBox checkBox3) {
 
-        if (checkBox.isChecked() || checkBox2.isChecked() && checkBox3.isChecked()) {
+        if (binding.checkbox.isChecked() || binding.checkbox2.isChecked() && binding.checkbox3.isChecked()) {
             return true;
         }
         return false;
@@ -159,74 +153,63 @@ public class User_Consent extends AppCompatActivity {
     public void onClick_user_consent(View view) {
         // 어차피 체크박스 2,3 중 하나라도 체크가 되어있지 않으면 체크박스1은 체크 x.
 
-        if (!checkBox.isChecked()) {
+        if (!binding.checkbox.isChecked()) {
             Toast.makeText(getApplicationContext(), "이용 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
         } else {
 //            agreement();
 
             Intent intent = new Intent(User_Consent.this, ListActivity.class);
             startActivity(intent);
-
         }
     }
 
-        public void agreement() {
+    public void agreement() {
         try {
-            OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/users/user_put.php", hostname);
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
 
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("ucAreaNo",ucAreaNo)
-                    .addFormDataPart("ucDistribId",ucDistribId)
-                    .addFormDataPart("ucAgencyId",ucAgencyId)
-                    .addFormDataPart("ucMemCourId",ucMemCourId)
-
-                    // Value 값을 체크박스 체크 여부에 따라 받을수 있을지??
-                    .addFormDataPart("ucAgreeOption",AgreeOption)
-                    .addFormDataPart("ucThirdPartyOption",ThirPartyOption)
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("Content-Type", "x-www-form-urlencoded")
-                    .post(requestBody)
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        final ErrorDto error = new Gson().fromJson(response.body().string(), ErrorDto.class);
-                        Log.i("tag", error.message);
-                        // 응답 실패
-                        Log.i("tag", "응답실패");
-                    } else {
-                        // 응답 성공
-                        Log.i("tag", "응답 성공");
-                        final String responseData = response.body().string();
-                        final User_Consent_Response user_consent_response = new Gson().fromJson(responseData, User_Consent_Response.class);
-
-                        runOnUiThread(() -> {
-                            try {
-//                                if(!user_consent_response.ucAgreeOption.equals("1") && !user_consent_response.ucThirdPartyOption.equals("1")) {
-//                                    user_consent_response.ucAgreeOption.replace("0", "1");
-//                                    user_consent_response.ucThirdPartyOption.replace("0", "1");
-//                                }
-                                Toast.makeText(getApplicationContext(), "응답" + user_consent_response.acUserId, Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                e.printStackTrace();
+            service.agree(ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId,
+                    AgreeOption,
+                    ThirdPartyOption)
+                    .enqueue(new retrofit2.Callback<User_Consent_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<User_Consent_Response> call,
+                                               retrofit2.Response<User_Consent_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final User_Consent_Response user_consent_response = response.body();
+//                                    Intent intent = new Intent(User_Consent.this, ListActivity.class);
+//                                    startActivity(intent);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        });
-                    }
-                }
-            });
 
-        } catch (Exception e) {}
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<User_Consent_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -14,6 +14,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testcode.api.LoginService;
+import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.ActivityChangePwBinding;
+import com.example.testcode.databinding.ActivityMainBinding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.Join_Response;
 import com.google.gson.Gson;
@@ -37,47 +41,40 @@ import okhttp3.Response;
  */
 
 public class Change_pw extends AppCompatActivity {
-    TextView member_num;
-    EditText input_now_pw, input_new_pw, input_new_pw_check;
-    Button change_success, key_check;
-    String hostname = "222.239.254.253";
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+
+    ActivityChangePwBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_pw);
-
-        member_num = (TextView)findViewById(R.id.member_num);
-        input_now_pw = (EditText)findViewById(R.id.input_now_pw);
-        input_new_pw = (EditText)findViewById(R.id.input_new_pw);
-        input_new_pw_check = (EditText)findViewById(R.id.input_new_pw_check);
+        binding = ActivityChangePwBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
         actionBar.setTitle("비밀번호 변경");  //액션바 제목설정
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
-        SharedPreferences sharedPreferences= getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-        ucAreaNo = sharedPreferences.getString("ar","");
-        ucDistribId = sharedPreferences.getString("di","");
-        ucAgencyId = sharedPreferences.getString("ag","");
-        ucMemCourId = sharedPreferences.getString("me","");
+        SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
 
-        member_num.setText(ucAreaNo + "-" + ucDistribId + "-" + ucAgencyId + "-" + ucMemCourId);
+        binding.memberNum.setText(ucAreaNo + "-" + ucDistribId + "-" + ucAgencyId + "-" + ucMemCourId);
     }
 
     public void onClick_change_pw(View view) {
         switch (view.getId()) {
             case R.id.key_check:
                 Toast.makeText(this, "인증이 완료되었습니다.", Toast.LENGTH_SHORT).show();
-            // 휴대전화번호 인증 ~ 부분
+                // 휴대전화번호 인증 ~ 부분
                 break;
             case R.id.change_success:
-                if(!input_new_pw.getText().toString().equals(input_new_pw_check.getText().toString())) {
+                if (!binding.inputNewPw.getText().toString().equals(binding.inputNewPwCheck.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
-                }
-                else if (input_new_pw.getText().toString().equals(input_now_pw.getText().toString())) {
+                } else if (binding.inputNewPw.getText().toString().equals(binding.inputNowPw.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "현재 비밀번호와 일치합니다.", Toast.LENGTH_SHORT).show();
                 }
 
@@ -88,19 +85,76 @@ public class Change_pw extends AppCompatActivity {
 
     }
 
+
     public void Change_pw() {
         try {
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.changepw(ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId,
+                    binding.inputNewPw.getText().toString())
+                    .enqueue(new retrofit2.Callback<Join_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Join_Response> call,
+                                               retrofit2.Response<Join_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+
+                                    Toast.makeText(getApplicationContext(), "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(Change_pw.this);
+//
+//                                    builder.setTitle("비밀번호 변경이 완료되었습니다.");
+//
+//                                    AlertDialog alertDialog = builder.create();
+//
+//                                    alertDialog.show();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Join_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void Change_pw1() {
+        try {
             OkHttpClient client = new OkHttpClient();
-            String url = String.format("http://%s/chatt/app/users/user_put.php", hostname);
+            String url = String.format("http://%s/chatt/app/users/user_put.php", "222.239.254.253");
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("ucAreaNo", ucAreaNo)
-                    .addFormDataPart("ucDistribId",ucDistribId)
-                    .addFormDataPart("ucAgencyId",ucAgencyId)
-                    .addFormDataPart("ucMemCourId",ucMemCourId)
-                    .addFormDataPart("acPassword",input_new_pw.getText().toString())
-                    .addFormDataPart("ucAccessFlag","0")
+                    .addFormDataPart("ucDistribId", ucDistribId)
+                    .addFormDataPart("ucAgencyId", ucAgencyId)
+                    .addFormDataPart("ucMemCourId", ucMemCourId)
+                    .addFormDataPart("acPassword", binding.inputNewPw.getText().toString())
+                    .addFormDataPart("ucAccessFlag", "0")
                     .build();
 
             Request request = new Request.Builder()
