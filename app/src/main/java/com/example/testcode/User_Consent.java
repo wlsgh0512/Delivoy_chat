@@ -43,7 +43,9 @@ import okhttp3.Response;
  * MainActivity에서 ucAgreeOption , ucThirdPartyOption 값이 0인 경우 약관 동의 화면.
  * 체크박스 체크가 완료된 상태로 확인을 눌렀을 때 agreement() -> runOnUiThread에서
  * ucAgreeOption, ucThirdPartyOption 값을 0 -> 1로 바꾼다 ?
- * error code 500, Logcat은 Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $
+ * error code 500
+ * Logcat Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $ 없어지고
+ * NPE : println needs a message, Log에 찍힐 message가 null??
  */
 
 public class User_Consent extends AppCompatActivity {
@@ -156,10 +158,10 @@ public class User_Consent extends AppCompatActivity {
         if (!binding.checkbox.isChecked()) {
             Toast.makeText(getApplicationContext(), "이용 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
         } else {
-//            agreement();
+            agreement();
 
-            Intent intent = new Intent(User_Consent.this, ListActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(User_Consent.this, ListActivity.class);
+//            startActivity(intent);
         }
     }
 
