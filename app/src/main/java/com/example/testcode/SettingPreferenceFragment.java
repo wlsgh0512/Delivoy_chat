@@ -50,7 +50,7 @@ public class SettingPreferenceFragment extends PreferenceFragment {
 
 
     String hostname = "222.239.254.253";
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, user_id, name;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, user_id, name, pw;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +86,7 @@ public class SettingPreferenceFragment extends PreferenceFragment {
                 ucMemCourId = sharedPreferences.getString("me","");
                 user_id = sharedPreferences.getString("id","");
                 name = sharedPreferences.getString("name","");
+                pw = sharedPreferences.getString("pw", "");
 
     }// onCreate
 
@@ -133,7 +134,24 @@ public class SettingPreferenceFragment extends PreferenceFragment {
                 startActivity(intent1);
                 break;
             case "secession":
-                Member_secession();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("정말 회원탈퇴 하시겠습니까?")
+                        .setCancelable(true)
+                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                return;
+                            }
+                        });
+                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Member_secession();
+                        return;
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+
                 break;
         }
 
@@ -149,7 +167,7 @@ public class SettingPreferenceFragment extends PreferenceFragment {
                             ucAgencyId,
                             ucMemCourId,
                             user_id,
-                            "11111111",
+                            pw,
                             name)
                             .enqueue(new retrofit2.Callback<Secession_Response>() {
                                 @Override
