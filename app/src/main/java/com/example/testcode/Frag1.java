@@ -2,13 +2,10 @@ package com.example.testcode;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -17,32 +14,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.testcode.api.LoginService;
 import com.example.testcode.config.RetrofitConfig;
-import com.example.testcode.databinding.ActivityMainBinding;
 import com.example.testcode.databinding.FragmentFrag1Binding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
-import com.example.testcode.model.Join_Response;
-import com.example.testcode.model.LoginResponse;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.List;
 
 /**
  * 친구 탭 -> 친구 목록 조회.
@@ -98,8 +85,8 @@ public class Frag1 extends Fragment {
 //                startActivity(intent);
             }
         });
-
-        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);
         ucAreaNo = sharedPreferences.getString("ar","");
         ucDistribId = sharedPreferences.getString("di","");
         ucAgencyId = sharedPreferences.getString("ag","");
@@ -130,8 +117,29 @@ public class Frag1 extends Fragment {
                                 // 응답 성공
                                 Log.i("tag", "응답 성공");
                                 try {
-                                    final FriendsResponse friendsResponse = response.body();
-                                    friends_name.add(friendsResponse.acRealName);
+                                    FriendsResponse friendsResponse = response.body();
+
+                                    
+                                    /**
+                                     * acRealName을 참조하는 법??
+                                     * jsonArray, JsonObject 등등 적용하려 했으나 실패..
+                                     */
+//                                    if (jsonArray != null) {
+//                                        int len = jsonArray.length();
+//                                        for (int i=0;i<len;i++){
+//                                            friends_name.add(jsonArray.get(i).toString());
+//                                        }
+//                                    }
+
+
+
+
+
+
+
+
+
+//                                    friends_name.add(friendsResponse.items.astRooms.get(ucAreaNo));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
