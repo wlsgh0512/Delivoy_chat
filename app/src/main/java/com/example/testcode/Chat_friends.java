@@ -27,6 +27,7 @@ import com.example.testcode.model.DataItem;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.Join_Response;
 import com.example.testcode.model.MyAdapter;
+import com.example.testcode.model.Send_msg_Response;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -46,6 +47,9 @@ import okhttp3.Response;
  * 나오긴 하는데 화면에 진입했을 때 딱 안나오고 EditText를 한번 눌러야 나와서 (반응이 늦어서?)
  * 추후 작업 필요.
  * EditText를 눌렀을 때 마지막 채팅에 포커스가 맞춰지도록 .
+ *
+ * error code 500
+ * talk_post = Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $
  */
 
 public class Chat_friends extends AppCompatActivity {
@@ -138,14 +142,12 @@ public class Chat_friends extends AppCompatActivity {
     // 전송 버튼을 눌렀을 때
     public void onClick_sendmsg(View view) {
 
-        /**
-         * 여기서 talk_post.php
-         */
+        send_msg();
 
-        msg = binding.sendMsg.getText().toString();
-        dataList.add(new DataItem(msg, "사용자1", Code.ViewType.RIGHT_CONTENT));
-        binding.recyvlerv.scrollToPosition(dataList.size() - 1);
-        binding.sendMsg.setText("");
+//        msg = binding.sendMsg.getText().toString();
+//        dataList.add(new DataItem(msg, "사용자1", Code.ViewType.RIGHT_CONTENT));
+//        binding.recyvlerv.scrollToPosition(dataList.size() - 1);
+//        binding.sendMsg.setText("");
 
 
     }
@@ -157,6 +159,51 @@ public class Chat_friends extends AppCompatActivity {
      */
     public void addFile(View view) {
 
+    }
+
+    public void send_msg() {
+        try {
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.send_msg("1", "88", "17", "1", "1",
+                    binding.sendMsg.getText().toString())
+                    .enqueue(new retrofit2.Callback<Send_msg_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Send_msg_Response> call,
+                                               retrofit2.Response<Send_msg_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final Send_msg_Response send_msg_response = response.body();
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Send_msg_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
