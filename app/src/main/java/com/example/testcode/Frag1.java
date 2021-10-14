@@ -2,6 +2,7 @@ package com.example.testcode;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -23,11 +24,13 @@ import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,9 +83,9 @@ public class Frag1 extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> apterView, View view, int i, long l) {
 
-                Friends_list();
-//                Intent intent = new Intent(getActivity(), Chat_friends.class);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), Chat_friends.class);
+                startActivity(intent);
+
             }
         });
         // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
@@ -92,11 +95,8 @@ public class Frag1 extends Fragment {
         ucAgencyId = sharedPreferences.getString("ag","");
         ucMemCourId = sharedPreferences.getString("me","");
 
-//        test();
-        friends_name.add("asd");
 
-//        Friends_list();
-
+        Friends_list();
     }
 
     public void Friends_list() {
@@ -119,27 +119,15 @@ public class Frag1 extends Fragment {
                                 try {
                                     FriendsResponse friendsResponse = response.body();
 
-                                    
-                                    /**
-                                     * acRealName을 참조하는 법??
-                                     * jsonArray, JsonObject 등등 적용하려 했으나 실패..
-                                     */
-//                                    if (jsonArray != null) {
-//                                        int len = jsonArray.length();
-//                                        for (int i=0;i<len;i++){
-//                                            friends_name.add(jsonArray.get(i).toString());
-//                                        }
-//                                    }
+                                    List<FriendsResponse.Items.Rooms> items = friendsResponse.items.astRooms;
+                                    for(int i=0;i<items.size();i++) {
+                                        friends_name.add(items.get(i).acRealName);
+                                    }
 
+                                    Fadapter.notifyDataSetChanged();
 
-
-
-
-
-
-
-
-//                                    friends_name.add(friendsResponse.items.astRooms.get(ucAreaNo));
+                                    // 코틀린 friends_name.addAll(friendsResponse.items.astRooms.map(it::name))
+                                    //friends_name.add(friendsResponse.items.astRooms.stream().map(it -> it.name));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
