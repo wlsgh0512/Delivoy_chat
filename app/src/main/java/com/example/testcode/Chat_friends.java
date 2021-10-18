@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.example.testcode.api.LoginService;
@@ -25,13 +28,16 @@ import com.example.testcode.model.Chat_Response;
 import com.example.testcode.model.Code;
 import com.example.testcode.model.DataItem;
 import com.example.testcode.model.ErrorDto;
+import com.example.testcode.model.FriendsResponse;
 import com.example.testcode.model.Join_Response;
 import com.example.testcode.model.MyAdapter;
+import com.example.testcode.model.PollingChat_Response;
 import com.example.testcode.model.Send_msg_Response;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -50,14 +56,19 @@ import okhttp3.Response;
  *
  * error code 500
  * talk_post = Expected BEGIN_OBJECT but was STRING at line 8 column 1 path $
+ * 객체가 올것으로 기대 했는데 실제 데이터가 STRIN?
  */
 
 public class Chat_friends extends AppCompatActivity {
-    String hostname = "222.239.254.253";
     String msg = "";
-    ArrayList<DataItem> dataList;
+    ArrayList<DataItem> dataList = new ArrayList<>();
+
+    int getPosition;
+
     ActionBar actionBar;
 //    ArrayList<DataItem> dataList = new ArrayList<DataItem>();
+
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, name, getUiRoomNo;
 
     ActivityChatFriendsBinding binding;
 
@@ -69,16 +80,17 @@ public class Chat_friends extends AppCompatActivity {
 
         actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
 //        actionBar.setTitle("채팅");  //액션바 제목설정
-        // 1:1이면 상대이름을 ,
-        // multi면 그룹채팅 (참여인원) 카톡처럼.
 
         msg = binding.sendMsg.getText().toString();
 
-        initializeData();
-        get_talk();
+//        initializeData();
 
-//      임의로 값 넣어서 채팅창에 뜨는 것까지 확인.
-//      dataList.add(new DataItem("하이루 여포, 동탁", "김동현", Code.ViewType.LEFT_CONTENT));
+//        get_talk();
+
+        getPosition = getIntent().getIntExtra("uiRoomNo",1);
+        getUiRoomNo = Integer.toString(getPosition);
+
+        get_polling_talk();
 
         LinearLayoutManager manager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -87,7 +99,19 @@ public class Chat_friends extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
+        SharedPreferences sharedPreferences= getSharedPreferences("test", MODE_PRIVATE);
+        ucAreaNo = sharedPreferences.getString("ar","");
+        ucDistribId = sharedPreferences.getString("di","");
+        ucAgencyId = sharedPreferences.getString("ag","");
+        ucMemCourId = sharedPreferences.getString("me","");
+        name = sharedPreferences.getString("name","");
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binding.recyvlerv.scrollToPosition(dataList.size() - 1);
+            }
+        }, 200);
     }
 
     @Override
@@ -96,7 +120,6 @@ public class Chat_friends extends AppCompatActivity {
         inflater.inflate(R.menu.menu_chat, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
 
     // 대화상대 초대, 설정
     @Override
@@ -107,33 +130,32 @@ public class Chat_friends extends AppCompatActivity {
             /**
              * 대화상대 초대.
              * EditText 밑으로 친구 목록 리스트업.
-             * 검색해서 초대(초성 포함) 구현하는 것이 목표.
              */
-            case R.id.invite:
-                Intent intent = new Intent(Chat_friends.this, Chat_invite_room.class);
-                startActivity(intent);
-                break;
-
-            case R.id.exit:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("채팅방을 나가시겠습니까?")
-                        .setCancelable(true)
-                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                return;
-                            }
-                        });
-                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        Intent intent1 = new Intent(Chat_friends.this, ListActivity.class);
-                        startActivity(intent1);
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
-                break;
+//            case R.id.invite:
+//                Intent intent = new Intent(Chat_friends.this, Chat_invite_room.class);
+//                startActivity(intent);
+//                break;
+//
+//            case R.id.exit:
+//                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//                builder.setMessage("채팅방을 나가시겠습니까?")
+//                        .setCancelable(true)
+//                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                return;
+//                            }
+//                        });
+//                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                        Intent intent1 = new Intent(Chat_friends.this, ListActivity.class);
+//                        startActivity(intent1);
+//                    }
+//                });
+//                AlertDialog alert = builder.create();
+//                alert.show();
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -141,14 +163,13 @@ public class Chat_friends extends AppCompatActivity {
 
     // 전송 버튼을 눌렀을 때
     public void onClick_sendmsg(View view) {
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binding.recyvlerv.scrollToPosition(dataList.size() - 1);
+            }
+        }, 200);
         send_msg();
-
-//        msg = binding.sendMsg.getText().toString();
-//        dataList.add(new DataItem(msg, "사용자1", Code.ViewType.RIGHT_CONTENT));
-//        binding.recyvlerv.scrollToPosition(dataList.size() - 1);
-//        binding.sendMsg.setText("");
-
 
     }
 
@@ -161,10 +182,14 @@ public class Chat_friends extends AppCompatActivity {
 
     }
 
-    public void send_msg() {
+    public void send_msg(){
         try {
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
-            service.send_msg("1", "88", "17", "1", "1",
+            service.send_msg("1",
+                    ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId,
                     binding.sendMsg.getText().toString())
                     .enqueue(new retrofit2.Callback<Send_msg_Response>() {
                         @Override
@@ -176,6 +201,9 @@ public class Chat_friends extends AppCompatActivity {
                                 try {
                                     final Send_msg_Response send_msg_response = response.body();
 
+                                    msg = binding.sendMsg.getText().toString();
+                                    dataList.add(new DataItem(msg, "", Code.ViewType.RIGHT_CONTENT));
+                                    binding.sendMsg.setText("");
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -185,7 +213,7 @@ public class Chat_friends extends AppCompatActivity {
                                 try {
                                     error = new Gson().fromJson(response.errorBody().string(),
                                             ErrorDto.class);
-                                    Log.i("tag", error.message);
+                                    Log.i("tag", "" + error.message);
                                     // 응답 실패
                                     Log.i("tag", "응답실패");
                                 } catch (IOException e) {
@@ -210,7 +238,12 @@ public class Chat_friends extends AppCompatActivity {
     public void get_talk() {
         try {
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
-            service.chat("1", "1", "88", "17", "1", "1")
+            service.chat("1",
+                    getUiRoomNo,
+                    ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId)
                     .enqueue(new retrofit2.Callback<Chat_Response>() {
                         @Override
                         public void onResponse(retrofit2.Call<Chat_Response> call,
@@ -221,9 +254,13 @@ public class Chat_friends extends AppCompatActivity {
                                 try {
                                     final Chat_Response chat_response = response.body();
 
-                                    dataList.add(new DataItem(chat_response.acTalkMesg, chat_response.acRealName, Code.ViewType.LEFT_CONTENT));
-                                    actionBar.setTitle(chat_response.acRealName);
 
+                                    for (int i = 0; i < chat_response.uiTalkNo.length(); i ++) {
+                                        if (ucMemCourId != chat_response.ucMemCourId) {
+                                            dataList.add(new DataItem(chat_response.acTalkMesg, chat_response.acRealName, Code.ViewType.LEFT_CONTENT));
+                                            actionBar.setTitle(chat_response.acRealName);
+                                        }
+                                    }
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -253,6 +290,70 @@ public class Chat_friends extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
+    public void get_polling_talk() {
+        try {
+
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.pollingchat("1",
+//                    "9",
+                    getUiRoomNo,
+                    ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId)
+                    .enqueue(new retrofit2.Callback<PollingChat_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<PollingChat_Response> call,
+                                               retrofit2.Response<PollingChat_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final PollingChat_Response pollingChat_response = response.body();
+
+                                    List<PollingChat_Response.Items.Rooms> items = pollingChat_response.items.astRooms;
+
+                                    for(int i = 0 ; i < items.size(); i++) {
+                                        if( !ucMemCourId.equals(pollingChat_response.items.astRooms.get(i).ucMemCourId)) {
+                                            dataList.add(new DataItem(items.get(i).acTalkMesg, items.get(i).acRealName, Code.ViewType.LEFT_CONTENT));
+                                        } else {
+                                            dataList.add(new DataItem(items.get(i).acTalkMesg, name, Code.ViewType.RIGHT_CONTENT));
+                                        }
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<PollingChat_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     public void initializeData() {
         dataList = new ArrayList<>();
