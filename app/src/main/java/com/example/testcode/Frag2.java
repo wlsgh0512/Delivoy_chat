@@ -3,6 +3,7 @@ package com.example.testcode;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,9 +33,15 @@ import com.example.testcode.databinding.FragmentFrag1Binding;
 import com.example.testcode.databinding.FragmentFrag2Binding;
 import com.example.testcode.model.Change_roomTitle;
 import com.example.testcode.model.Chat_room_Response;
+import com.example.testcode.model.Code;
+import com.example.testcode.model.DataItem;
+import com.example.testcode.model.DataItem2;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
+import com.example.testcode.model.MyAdapter;
 import com.google.gson.Gson;
+
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,10 +62,11 @@ import okhttp3.Response;
  */
 
 public class Frag2 extends Fragment {
-    private ArrayAdapter Adapter;
     AlertDialog.Builder builder;
-    ArrayList<String> room_list = new ArrayList<String>();
+    ArrayList<DataItem2> room_list = new ArrayList<>();
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+
+    f2Adapter f2Adapter;
 
     FragmentFrag2Binding binding;
     ChatroomDialogBinding binding1;
@@ -71,15 +81,15 @@ public class Frag2 extends Fragment {
         // Inflate the layout for this fragment
 
         binding = FragmentFrag2Binding.inflate(getLayoutInflater());
+        binding1 = ChatroomDialogBinding.inflate(getLayoutInflater());
 
-        Adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, room_list);
-        binding.listview2.setAdapter(Adapter);
+        binding.listview2.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        LinearLayoutManager manager
+                = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        binding.listview2.setLayoutManager(manager);
 
-
-//        room_list.add("김김김, 나나나");
-//        item.add("이이이");
-//        item.add("박박박");
-//        item.add("최최최");
+        f2Adapter = new f2Adapter(room_list);
+        binding.listview2.setAdapter(f2Adapter);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
         ucAreaNo = sharedPreferences.getString("ar", "");
@@ -89,33 +99,29 @@ public class Frag2 extends Fragment {
 
         Chat_room_list();
 
-        // 채팅방을 클릭했을시 채팅창이 열리도록
-        binding.listview2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        f2Adapter.setOnItemClickListener(new f2Adapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-//                Chat_room_list();
-
+            public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), Chat_friends.class);
+                intent.putExtra("uiRoomNo", position + 1);
                 startActivity(intent);
-
+                // intent.putExtra로 postion이 아닌 uiroomno를 보내야된다.
             }
         });
 
-        // 채팅방을 롱클릭했을시 이름 변경, 상단 고정, 나가기 중 택1
-        binding.listview2.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        f2Adapter.setOnItemLongClickListener(new f2Adapter.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
+            public void onItemLongClick(View v, int position) {
                 builder = new AlertDialog.Builder(getActivity());
 
-                builder.setTitle(room_list.get(pos));
+//                builder.setTitle(room_list.get(position));
 
                 builder.setItems(R.array.chat_long, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
                             case 0:
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder = new AlertDialog.Builder(getActivity());
                                 builder.setTitle("채팅방 이름 변경");
                                 builder.setView(R.layout.chatroom_dialog);
 
@@ -129,10 +135,8 @@ public class Frag2 extends Fragment {
                                 builder.setNegativeButton("확인", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-
-
 //                                        change_title();
-
+                                        Log.i("tag", binding1.addboxdialog.getText().toString());
                                     }
                                 });
                                 builder.show();
@@ -143,21 +147,19 @@ public class Frag2 extends Fragment {
                             case 2:
                                 /**
                                  * 여기서 room_delete.php?
+                                 * loom_delete하고 리스트뷰 삭제해주기
                                  */
-                                // 나가기하면 listview 삭제 하면 될듯
-//                                Toast.makeText(getActivity(), "채팅방 나가기", Toast.LENGTH_SHORT).show();
+//                                room_list.remove(i);
                                 break;
                         }
                         dialogInterface.dismiss();
                     }
                 });
                 builder.show();
-                return true;
             }
         });
 
         return binding.getRoot();
-
     }
 
     public void showDialog() {
@@ -219,14 +221,31 @@ public class Frag2 extends Fragment {
                                 // 응답 성공
                                 Log.i("tag", "응답 성공");
                                 try {
-                                    // response.body() null만 들어옴.
                                     final Chat_room_Response chat_room_response = response.body();
 
                                     List<Chat_room_Response.Items.Rooms> items = chat_room_response.items.astRooms;
                                     for(int i=0;i<items.size();i++) {
-                                        room_list.add(items.get(i).acRoomTitle);
+                                        room_list.add(new DataItem2(items.get(i).acRoomTitle));
+
                                     }
-                                    Adapter.notifyDataSetChanged();
+
+
+                                    f2Adapter.notifyDataSetChanged();
+
+
+//                                    SharedPreferences prefs = getActivity().getSharedPreferences(
+//                                            "roomno"
+//                                            , MODE_PRIVATE);
+//                                    SharedPreferences.Editor editor = prefs.edit();
+//                                    JSONArray a = new JSONArray();
+//                                    for ( int i = 0; i < items.size(); i++) {
+//                                        a.put(items.get(i).uiRoomNo);
+//                                    }
+//                                    editor.commit();
+
+//                                    Intent intent7 = new Intent(getActivity(), Create_chatroom.class);
+//                                    intent7.putExtra("room_list",room_list);
+//                                    startActivity(intent7);
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -236,7 +255,7 @@ public class Frag2 extends Fragment {
                                 try {
                                     error = new Gson().fromJson(response.errorBody().string(),
                                             ErrorDto.class);
-                                    Log.i("tag", error.message);
+//                                    Log.i("tag", error.message);
                                     // 응답 실패
                                     Log.i("tag", "응답실패");
                                 } catch (IOException e) {
@@ -260,7 +279,9 @@ public class Frag2 extends Fragment {
     public void change_title() {
         try {
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
-            service.change("1", "방제", ""
+            service.change("1",
+                    binding1.addboxdialog.getText().toString(),
+                    ""
 //                    uiRoomNo,
 //                    acRoomTitle,
 //                    acImageUrl
@@ -276,7 +297,7 @@ public class Frag2 extends Fragment {
                                     // response.body() null만 들어옴.
                                     final Change_roomTitle change_roomTitle = response.body();
 //                                    Toast.makeText(getActivity().getApplicationContext(), "Frag2" + chat_room_response.uiRoomNo, Toast.LENGTH_SHORT).show();
-
+                                        builder.setTitle(binding1.addboxdialog.getText().toString());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

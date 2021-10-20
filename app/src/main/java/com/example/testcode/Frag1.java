@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 import com.example.testcode.api.LoginService;
 import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.databinding.FragmentFrag1Binding;
+import com.example.testcode.model.DataItem2;
+import com.example.testcode.model.DataItem2;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
 import com.google.gson.Gson;
@@ -43,12 +47,12 @@ import java.util.List;
  */
 
 public class Frag1 extends Fragment {
-    ArrayList<String> friends_name = new ArrayList<String>();
-    private ArrayAdapter Fadapter;
+    ArrayList<DataItem2> friends_name = new ArrayList<>();
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
 
     FragmentFrag1Binding binding;
 
+    f1Adapter f1Adapter;
     //    public static Context context_frag1;
     public Frag1() {
         // Required empty public constructor
@@ -64,9 +68,14 @@ public class Frag1 extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentFrag1Binding.inflate(getLayoutInflater());
 
-//        Friends_list();
-//        friends_name.add("asd");
-//        test();
+        binding.listview.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        LinearLayoutManager manager
+                = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        binding.listview.setLayoutManager(manager);
+
+        f1Adapter = new f1Adapter(friends_name);
+        binding.listview.setAdapter(f1Adapter);
+
         return binding.getRoot();
         // Inflate the layout for this fragment
     }
@@ -75,39 +84,33 @@ public class Frag1 extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Fadapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, friends_name);
-        binding.listview.setAdapter(Fadapter);
-
-        // listview를 클릭했을 때 채팅방으로 넘어가도록,,
-        binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        f1Adapter.setOnItemClickListener(new f1Adapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> apterView, View view, int i, long l) {
-
+            public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), Chat_friends.class);
+                intent.putExtra("uiRoomNo", position + 1);
                 startActivity(intent);
-
             }
         });
-        // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+
         SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", MODE_PRIVATE);
         ucAreaNo = sharedPreferences.getString("ar","");
         ucDistribId = sharedPreferences.getString("di","");
         ucAgencyId = sharedPreferences.getString("ag","");
         ucMemCourId = sharedPreferences.getString("me","");
 
-
         Friends_list();
+
     }
 
     public void Friends_list() {
         try {
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
             service.friend(
-//                    ucAreaNo,
-//                    ucDistribId,
-//                    ucAgencyId,
-//                    ucMemCourId
-                    "88","17","1","1"
+                    ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId
             )
                     .enqueue(new retrofit2.Callback<FriendsResponse>() {
                         @Override
@@ -120,14 +123,18 @@ public class Frag1 extends Fragment {
                                     FriendsResponse friendsResponse = response.body();
 
                                     List<FriendsResponse.Items.Rooms> items = friendsResponse.items.astRooms;
-                                    for(int i=0;i<items.size();i++) {
-                                        friends_name.add(items.get(i).acRealName);
+                                    for(int i = 0 ; i < items.size(); i++) {
+                                        friends_name.add(new DataItem2(items.get(i).acRealName));
                                     }
 
-                                    Fadapter.notifyDataSetChanged();
+                                    f1Adapter.notifyDataSetChanged();
+
+//                                    Intent intent7 = new Intent(getActivity(), Create_chatroom.class);
+//                                    intent7.putExtra("friends_name", friends_name);
+//                                    startActivity(intent7);
 
                                     // 코틀린 friends_name.addAll(friendsResponse.items.astRooms.map(it::name))
-                                    //friends_name.add(friendsResponse.items.astRooms.stream().map(it -> it.name));
+                                    // friends_name.add(friendsResponse.items.astRooms.stream().map(it -> it.name));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -156,19 +163,6 @@ public class Frag1 extends Fragment {
             e.printStackTrace();
         }
     }
-
-    public void test() {
-        getActivity().runOnUiThread(() -> {
-            try {
-                friends_name.add("asdasd");
-                Toast.makeText(getActivity().getApplicationContext(), "응답 : ", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        });
-    }
-
 
 }
 
