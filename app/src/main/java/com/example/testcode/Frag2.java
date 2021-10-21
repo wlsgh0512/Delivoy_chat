@@ -190,7 +190,7 @@ public class Frag2 extends Fragment {
 
                                     items = chat_room_response.items.astRooms;
                                     for (int i = 0; i < items.size(); i++) {
-                                        room_list.add(new DataItem2(items.get(i).acRoomTitle));
+                                        room_list.add(new DataItem2(items.get(i).acRoomTitle, items.get(i).uiRoomNo));
                                     }
                                     f2Adapter.notifyDataSetChanged();
 

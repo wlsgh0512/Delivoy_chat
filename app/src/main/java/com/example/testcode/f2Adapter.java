@@ -60,14 +60,13 @@ public class f2Adapter extends RecyclerView.Adapter{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         ((f2Adapter.f2Holder) holder).room.setText(f2List.get(position).getContent());
 
         ((f2Holder) holder).room.setOnClickListener(view -> {
-            Intent intent = new Intent(f2.getActivity(), Chat_friends.class);
-            intent.putExtra("uiRoomNo", f2.items.get(position).uiRoomNo);
-            f2.startActivity(intent);
-
+            Intent intent = new Intent(view.getContext(), Chat_friends.class);
+            intent.putExtra("uiRoomNo", f2List.get(position).getRno());
+            view.getContext().startActivity(intent);
         });
 
     }
