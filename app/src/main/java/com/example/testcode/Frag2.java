@@ -62,11 +62,14 @@ import okhttp3.Response;
  */
 
 public class Frag2 extends Fragment {
-    AlertDialog.Builder builder;
+    AlertDialog.Builder builder, builder1;
     ArrayList<DataItem2> room_list = new ArrayList<>();
+    ArrayList<String> room = new ArrayList<>();
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+    List<Chat_room_Response.Items.Rooms> items;
 
     f2Adapter f2Adapter;
+    Frag2 f2;
 
     FragmentFrag2Binding binding;
     ChatroomDialogBinding binding1;
@@ -88,7 +91,7 @@ public class Frag2 extends Fragment {
                 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         binding.listview2.setLayoutManager(manager);
 
-        f2Adapter = new f2Adapter(room_list);
+        f2Adapter = new f2Adapter(room_list, f2);
         binding.listview2.setAdapter(f2Adapter);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
@@ -99,22 +102,26 @@ public class Frag2 extends Fragment {
 
         Chat_room_list();
 
-        f2Adapter.setOnItemClickListener(new f2Adapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                Intent intent = new Intent(getActivity(), Chat_friends.class);
-                intent.putExtra("uiRoomNo", position + 1);
-                startActivity(intent);
-                // intent.putExtra로 postion이 아닌 uiroomno를 보내야된다.
-            }
-        });
+
+//        f2Adapter.setOnItemClickListener(new f2Adapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View v, int position) {
+//                f2Adapter.getItemId(position);
+//
+////                Intent intent = new Intent(getActivity(), Chat_friends.class);
+////                intent.putExtra("uiRoomNo", position + 1);
+////                startActivity(intent);
+//                // intent.putExtra로 postion이 아닌 uiroomno를 ?
+//            }
+//        });
+
 
         f2Adapter.setOnItemLongClickListener(new f2Adapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(View v, int position) {
                 builder = new AlertDialog.Builder(getActivity());
 
-//                builder.setTitle(room_list.get(position));
+                builder.setTitle(room_list.get(position).getContent());
 
                 builder.setItems(R.array.chat_long, new DialogInterface.OnClickListener() {
                     @Override
@@ -123,7 +130,9 @@ public class Frag2 extends Fragment {
                             case 0:
                                 builder = new AlertDialog.Builder(getActivity());
                                 builder.setTitle("채팅방 이름 변경");
-                                builder.setView(R.layout.chatroom_dialog);
+                                final EditText editText = new EditText(getActivity());
+//                                builder.setView(R.layout.chatroom_dialog);
+                                builder.setView(editText);
 
                                 builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
                                     @Override
@@ -136,7 +145,7 @@ public class Frag2 extends Fragment {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
 //                                        change_title();
-                                        Log.i("tag", binding1.addboxdialog.getText().toString());
+                                        Log.i("tag", editText.getText().toString());
                                     }
                                 });
                                 builder.show();
@@ -162,50 +171,6 @@ public class Frag2 extends Fragment {
         return binding.getRoot();
     }
 
-    public void showDialog() {
-        builder = new AlertDialog.Builder(getActivity());
-
-        // 채팅에 참여중인 명단을 불러와서 settitle?
-        builder.setTitle("채팅방");
-        builder.setItems(R.array.chat_long, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i) {
-                    case 0:
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("채팅방 이름 변경");
-                        builder.setView(R.layout.chatroom_dialog);
-
-                        builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                return;
-                            }
-                        });
-
-                        builder.setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                        builder.show();
-                        break;
-                    case 1:
-                        // Listview 순서 바꿔주기 후 고정?
-                        Toast.makeText(getActivity(), "qwe", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        // 나가기하면 listview 삭제 하면 될듯
-                        Toast.makeText(getActivity(), "zxc", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                dialogInterface.dismiss();
-            }
-        });
-        builder.show();
-    }
-
     public void Chat_room_list() {
         try {
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
@@ -223,25 +188,12 @@ public class Frag2 extends Fragment {
                                 try {
                                     final Chat_room_Response chat_room_response = response.body();
 
-                                    List<Chat_room_Response.Items.Rooms> items = chat_room_response.items.astRooms;
-                                    for(int i=0;i<items.size();i++) {
+                                    items = chat_room_response.items.astRooms;
+                                    for (int i = 0; i < items.size(); i++) {
                                         room_list.add(new DataItem2(items.get(i).acRoomTitle));
-
                                     }
-
-
                                     f2Adapter.notifyDataSetChanged();
 
-
-//                                    SharedPreferences prefs = getActivity().getSharedPreferences(
-//                                            "roomno"
-//                                            , MODE_PRIVATE);
-//                                    SharedPreferences.Editor editor = prefs.edit();
-//                                    JSONArray a = new JSONArray();
-//                                    for ( int i = 0; i < items.size(); i++) {
-//                                        a.put(items.get(i).uiRoomNo);
-//                                    }
-//                                    editor.commit();
 
 //                                    Intent intent7 = new Intent(getActivity(), Create_chatroom.class);
 //                                    intent7.putExtra("room_list",room_list);
@@ -278,9 +230,11 @@ public class Frag2 extends Fragment {
 
     public void change_title() {
         try {
+            final String title = binding1.addboxdialog.getText().toString();
+
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
             service.change("1",
-                    binding1.addboxdialog.getText().toString(),
+                    title,
                     ""
 //                    uiRoomNo,
 //                    acRoomTitle,
@@ -296,8 +250,8 @@ public class Frag2 extends Fragment {
                                 try {
                                     // response.body() null만 들어옴.
                                     final Change_roomTitle change_roomTitle = response.body();
-//                                    Toast.makeText(getActivity().getApplicationContext(), "Frag2" + chat_room_response.uiRoomNo, Toast.LENGTH_SHORT).show();
-                                        builder.setTitle(binding1.addboxdialog.getText().toString());
+
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -326,7 +280,6 @@ public class Frag2 extends Fragment {
             e.printStackTrace();
         }
     }
-
 
 
 }
