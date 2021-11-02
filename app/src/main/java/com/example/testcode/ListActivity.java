@@ -4,13 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
 
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.testcode.api.LoginService;
 import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.FriendsListBinding;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
 import com.google.android.material.tabs.TabLayout;
@@ -26,6 +27,8 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 채팅 메인 화면
@@ -33,30 +36,34 @@ import java.util.ArrayList;
  */
 
 public class ListActivity extends AppCompatActivity {
-    String hostname = "222.239.254.253";
     ArrayList<String> item = new ArrayList<String>();
-    ViewPager viewpager;
-    TabLayout tabs;
 
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+
+    FriendsListBinding binding;
+
+    Frag1 frag1;
+
+    Timer timer;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.friends_list);
+        binding = FriendsListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.addTab(tabs.newTab().setText("친구"));
-        tabs.addTab(tabs.newTab().setText("채팅"));
-        tabs.setTabGravity(tabs.GRAVITY_FILL);
+        binding.tabs.addTab(binding.tabs.newTab().setText("친구"));
+        binding.tabs.addTab(binding.tabs.newTab().setText("채팅"));
+        binding.tabs.setTabGravity(binding.tabs.GRAVITY_FILL);
 
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    Toast.makeText(ListActivity.this, "Tab 1", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ListActivity.this, "Tab 1", Toast.LENGTH_SHORT).show();
                 } else if (tab.getPosition() == 1) {
-                    Toast.makeText(ListActivity.this, "Tab 2", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ListActivity.this, "Tab 2", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -72,15 +79,14 @@ public class ListActivity extends AppCompatActivity {
         });
 
         //Adapter
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         final ViewPagerAdapter myPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         myPagerAdapter.addFragment(new Frag1());
         myPagerAdapter.addFragment(new Frag2());
-        viewPager.setAdapter(myPagerAdapter);
+        binding.viewpager.setAdapter(myPagerAdapter);
 
         //탭 선택 이벤트
-        tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs));
+        binding.tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(binding.viewpager));
+        binding.viewpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabs));
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
         actionBar.setTitle("채팅");  //액션바 제목설정
@@ -113,7 +119,10 @@ public class ListActivity extends AppCompatActivity {
             case R.id.create_chat:
                 Intent intent = new Intent(ListActivity.this, Create_chatroom.class);
                 startActivity(intent);
-                // 채팅방 만드는 화면 넣을것
+                break;
+            case R.id.add_friends:
+                Intent intent0 = new Intent(ListActivity.this, AddFriends.class);
+                startActivity(intent0);
                 break;
             case R.id.shared_settings:
                 Intent intent1 = new Intent(ListActivity.this, SettingActivity.class);
@@ -164,7 +173,7 @@ public class ListActivity extends AppCompatActivity {
                                 Log.i("tag", "응답 성공");
                                 try {
                                     final FriendsResponse friendsResponse = response.body();
-                                    item.add(friendsResponse.acRealName);
+//                                    item.add(friendsResponse.acRealName);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -193,4 +202,28 @@ public class ListActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        timer.cancel();
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        timer = new Timer(true); //인자가 Daemon 설정인데 true 여야 죽지 않음.
+//        handler = new Handler();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                handler.post(new Runnable(){
+//                    public void run(){
+//                    }
+//                });
+//            }
+//        }, 0, 500);
+//    }
+
+
 }

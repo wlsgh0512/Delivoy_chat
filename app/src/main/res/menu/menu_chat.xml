@@ -2,13 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+<!--    <item-->
+<!--        android:id="@+id/menu"-->
+<!--        android:icon="@drawable/navi_drawer"-->
+<!--        app:showAsAction="ifRoom"-->
+        android:title="asdasd"/>
+    <item
+        android:id="@+id/list"
+        android:title="참여중인 사용자"
+        app:showAsAction="never" />
     <item
         android:id="@+id/invite"
         android:title="대화상대 초대"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
     <item
         android:id="@+id/exit"
         android:title="나가기"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
 </menu>

@@ -6,7 +6,7 @@
     <string-array name="chat_long">
         <item>채팅방 이름 변경</item>
         <item>채팅방 상단 고정</item>
-        <item>나가기</item>
+        <item>삭제하기</item>
     </string-array>
 
     <string name="underlined_text"><u>보기</u></string>

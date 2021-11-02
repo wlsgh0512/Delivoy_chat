@@ -94,8 +94,10 @@ public class Change_info extends AppCompatActivity {
                     ucAgencyId,
                     ucMemCourId,
                     binding.inputNickname.getText().toString(),
-                    binding.inputPhoneNumber.getText().toString(),
-                    binding.inputEmailAddress.getText().toString(),
+//                    binding.inputPhoneNumber.getText().toString(),
+                    "01052546545",
+//                    binding.inputEmailAddress.getText().toString(),
+                    "wwqq@naver.com",
                     uc)
 
                     .enqueue(new retrofit2.Callback<Join_Response>() {
@@ -107,13 +109,15 @@ public class Change_info extends AppCompatActivity {
                                 Log.i("tag", "응답 성공");
                                 try {
                                     final Join_Response join_response = response.body();
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(Change_info.this);
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(Change_info.this);
+//
+//                                    builder.setTitle("정보 수정이 완료되었습니다.");
+//
+//                                    AlertDialog alertDialog = builder.create();
+//
+//                                    alertDialog.show();
 
-                                    builder.setTitle("정보 수정이 완료되었습니다.");
-
-                                    AlertDialog alertDialog = builder.create();
-
-                                    alertDialog.show();
+                                    Toast.makeText(getApplicationContext(), "정보수정이 완료되었습니다.", Toast.LENGTH_SHORT).show();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

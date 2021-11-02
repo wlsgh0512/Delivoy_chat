@@ -52,7 +52,7 @@ public class User_Consent extends AppCompatActivity {
     CheckBox checkBox, checkBox2, checkBox3;
     private String TAG = "이용약관 닫기";
 
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, AgreeOption, ThirdPartyOption;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, ucAgreeOption, ucThirdPartyOption;
 
     ActivityUserConsentBinding binding;
 
@@ -80,8 +80,8 @@ public class User_Consent extends AppCompatActivity {
         ucDistribId = sharedPreferences.getString("di", "");
         ucAgencyId = sharedPreferences.getString("ag", "");
         ucMemCourId = sharedPreferences.getString("me", "");
-        AgreeOption = sharedPreferences.getString("ao", "");
-        ThirdPartyOption = sharedPreferences.getString("tpo", "");
+        ucAgreeOption = sharedPreferences.getString("ao", "");
+        ucThirdPartyOption = sharedPreferences.getString("tpo", "");
 
         // 전체동의 클릭시
         // 전체 true / 전체 false 로 변경
@@ -158,10 +158,13 @@ public class User_Consent extends AppCompatActivity {
         if (!binding.checkbox.isChecked()) {
             Toast.makeText(getApplicationContext(), "이용 약관 동의가 필요합니다.", Toast.LENGTH_SHORT).show();
         } else {
-            agreement();
 
+
+            agreement();
+//
 //            Intent intent = new Intent(User_Consent.this, ListActivity.class);
 //            startActivity(intent);
+
         }
     }
 
@@ -173,8 +176,8 @@ public class User_Consent extends AppCompatActivity {
                     ucDistribId,
                     ucAgencyId,
                     ucMemCourId,
-                    AgreeOption,
-                    ThirdPartyOption)
+                    ucAgreeOption,
+                    ucThirdPartyOption)
                     .enqueue(new retrofit2.Callback<User_Consent_Response>() {
                         @Override
                         public void onResponse(retrofit2.Call<User_Consent_Response> call,
@@ -184,6 +187,8 @@ public class User_Consent extends AppCompatActivity {
                                 Log.i("tag", "응답 성공");
                                 try {
                                     final User_Consent_Response user_consent_response = response.body();
+
+//                                    Toast.makeText(getApplicationContext(), "" + user_consent_response.ucAgreeOption, Toast.LENGTH_SHORT).show();
 //                                    Intent intent = new Intent(User_Consent.this, ListActivity.class);
 //                                    startActivity(intent);
                                 } catch (Exception e) {

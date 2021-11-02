@@ -6,6 +6,11 @@
         android:icon="@drawable/addroom"
         android:title="새로운 채팅방 만들기"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/add_friends"
+        android:icon="@drawable/ic_baseline_supervisor_account_24"
+        android:title="친구 추가"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/shared_settings"

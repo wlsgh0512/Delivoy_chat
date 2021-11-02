@@ -48,6 +48,6 @@
             android:foreground="?attr/selectableItemBackground"
             android:scaleType="fitXY"
             android:layout_gravity="center_horizontal"
-            android:onClick="onClick_sendmsg"/>
+            android:onClick="onClick_sendmsg_room"/>
     </LinearLayout>
 </RelativeLayout>

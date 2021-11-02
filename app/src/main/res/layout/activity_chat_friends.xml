@@ -50,4 +50,6 @@
             android:layout_gravity="center_horizontal"
             android:onClick="onClick_sendmsg"/>
     </LinearLayout>
+
+
 </RelativeLayout>

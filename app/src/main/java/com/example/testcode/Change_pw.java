@@ -38,10 +38,12 @@ import okhttp3.Response;
  * postman에서 실제로 데이터가 바뀌는거 확인.
  * 여기서도 dialog가 안뜸.
  * Chanege_info와 동일하게 휴대전화인증 미구현.
+ * errorcode 500
+ * NullPointerException: println needs a message
  */
 
 public class Change_pw extends AppCompatActivity {
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, pw, name;
 
     ActivityChangePwBinding binding;
 
@@ -61,6 +63,8 @@ public class Change_pw extends AppCompatActivity {
         ucDistribId = sharedPreferences.getString("di", "");
         ucAgencyId = sharedPreferences.getString("ag", "");
         ucMemCourId = sharedPreferences.getString("me", "");
+        pw = sharedPreferences.getString("pw", "");
+        name = sharedPreferences.getString("name", "");
 
         binding.memberNum.setText(ucAreaNo + "-" + ucDistribId + "-" + ucAgencyId + "-" + ucMemCourId);
     }
@@ -93,7 +97,9 @@ public class Change_pw extends AppCompatActivity {
                     ucDistribId,
                     ucAgencyId,
                     ucMemCourId,
-                    binding.inputNewPw.getText().toString())
+                    binding.inputNewPw.getText().toString(),
+                    pw,
+                    name)
                     .enqueue(new retrofit2.Callback<Join_Response>() {
                         @Override
                         public void onResponse(retrofit2.Call<Join_Response> call,

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -17,34 +18,29 @@ import com.example.testcode.model.LoginResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 메인 화면.
  * 로그인 방식 두개, 아이디 찾기, 비밀번호 찾기 완료.
  * 로그인 방식 라디오 버튼 선택하면 아이디 입력하는 곳에 다른 형식의 EditText 나오게.
- * 현재는 구현 방법을 모르겠어서 위치는 각자 잡고 setVisibility로 했습니다..
- * 자동 로그인미구현.
+ * 현재는 위치 각자 잡고 setVisibility
  */
 
 public class MainActivity extends AppCompatActivity {
-    String hostname = "222.239.254.253";
-    String port = "80";
-    String url = "http://" + hostname + ":" + port + "0x0201";
-    String oldid = "";
-    String ar = "";
-    String di = "";
-    String ag = "";
-    String me = "";
-    String id = "";
-    String pw = "";
 
     private ActivityMainBinding binding;
+    private boolean mBackPressedToExitOneMore;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.rbOldLogin.setChecked(true);
 
         binding.rgLoginMethod.setOnCheckedChangeListener((radioGroup, id) -> {
             switch (radioGroup.getCheckedRadioButtonId()) {
@@ -125,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                                     editor.putString("ao", loginResponse.ucAgreeOption);
                                     editor.putString("tpo", loginResponse.ucThirdPartyOption);
                                     editor.putString("ac", loginResponse.ucAccessFlag);
+                                    editor.putString("pw", binding.userPw.getText().toString());
                                     editor.commit();
 
                                     // Option 두 개의 Value값이 1이라면 이미 동의를 한 것.
@@ -190,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                                             "test"
                                             , MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
+
                                     // json으로
                                     editor.putString("loginResponse", new Gson().toJson(loginResponse));
                                     editor.commit();
@@ -238,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 }
 
 

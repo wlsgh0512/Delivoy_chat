@@ -21,6 +21,9 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         myDataList = dataList;
     }
 
+    public DataItem getLastItem() {
+        return myDataList.get(myDataList.size() - 1);
+    }
 
     @NonNull
     @Override

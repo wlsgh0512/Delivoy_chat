@@ -125,7 +125,8 @@
             android:lines="1"
             android:textColor="@color/textColorPrimary"
             android:textSize="18dp"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:hint="아이디 입력"/>
 
         <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/user_pw"
@@ -137,7 +138,8 @@
         android:textColor="@color/textColorPrimary"
         android:textSize="18dp"
         android:singleLine="true"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+            android:hint="비밀번호 입력"/>
 
 
         <Button

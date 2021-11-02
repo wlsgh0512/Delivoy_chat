@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +7,22 @@
     tools:context=".Chat_invite_room"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/invite_user"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:hint="초대할 유저를 선택" />
+
     <EditText
         android:id="@+id/find_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="이름(초성), 전화번호 검색"/>
 
+    <com.example.testcode.components.FriendList
+        android:id="@+id/friend_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-
-</RelativeLayout>
+</LinearLayout>

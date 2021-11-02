@@ -6,9 +6,8 @@
     tools:context=".Frag1"
     android:background="@color/white">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:id="@+id/listview"
+    <com.example.testcode.components.FriendList
+        android:id="@+id/friend_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

@@ -15,8 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestCode">
         <activity
+            android:name=".AddFriends"
+            android:exported="true"
+            android:parentActivityName=".ListActivity"/>
+        <activity
+            android:name=".ListTest"
+            android:exported="true"
+            android:parentActivityName=".Chat_friends"/>
+        <activity
             android:name=".Change_info"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".ListActivity"/>
         <activity
             android:name=".Chat_room"
             android:exported="true" />

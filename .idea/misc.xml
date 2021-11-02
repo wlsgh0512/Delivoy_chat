@@ -14,6 +14,7 @@
         <entry key="..\:/PJH/TestCode/app/src/main/res/drawable/ic_launcher_background.xml" value="0.14947916666666666" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/drawable/ic_search_white.xml" value="0.20833333333333334" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/drawable/memo_border.xml" value="0.2175925925925926" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_add_friends.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_change_info.xml" value="0.36614583333333334" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_change_pw.xml" value="0.264" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_chat.xml" value="0.25364583333333335" />
@@ -21,11 +22,14 @@
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_chat_invite.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_chat_invite_main.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_chat_room.xml" value="0.36614583333333334" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_create_chatroom.xml" value="0.264" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_find_id.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_find_id1.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_find_pw.xml" value="0.2" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_join_member.xml" value="0.264" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_list.xml" value="0.2" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_list_test.xml" value="0.25364583333333335" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_list_up.xml" value="0.17239583333333333" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_main.xml" value="0.2390625" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_main2.xml" value="0.32135416666666666" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/activity_setting.xml" value="0.1296875" />
@@ -39,17 +43,23 @@
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/chatroom_dialog.xml" value="0.2390625" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/dot_setting.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/dot_user.xml" value="0.264" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/f1_friends_list.xml" value="0.264" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/f2_room_list.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/find_id.xml" value="0.2" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/find_password.xml" value="0.2390625" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/fragment_blank.xml" value="0.1296875" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/fragment_frag1.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/fragment_frag2.xml" value="0.25364583333333335" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/friend_list.xml" value="0.3186344238975818" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/friends_list.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/join_member.xml" value="0.2390625" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/left.xml" value="0.21041666666666667" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/navi_header.xml" value="0.13333333333333333" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/navi_test.xml" value="0.20364583333333333" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/navi_test2.xml" value="0.20364583333333333" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/right.xml" value="0.19583333333333333" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/layout/settings.xml" value="0.16" />
+        <entry key="..\:/PJH/TestCode/app/src/main/res/layout/test_roomlist.xml" value="0.20208333333333334" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/menu/menu.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/menu/menu_chat.xml" value="0.25364583333333335" />
         <entry key="..\:/PJH/TestCode/app/src/main/res/menu/menu_chat_invite_main.xml" value="0.2" />

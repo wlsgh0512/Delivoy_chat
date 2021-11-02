@@ -38,7 +38,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * settings_preference.xml -> 아이디 부분 summary에 어떻게 아이디 표현 ??
+ * settings_preference.xml -> 아이디 부분 summary에 어떻게 아이디 표현 - 해
+ * 메시지 알림, 진동, 소리, 알림음, 텍스트 크기 현재는 내용 구현이 안 되어 있음.
  */
 
 public class SettingPreferenceFragment extends PreferenceFragment {
@@ -48,8 +49,6 @@ public class SettingPreferenceFragment extends PreferenceFragment {
     ListPreference keywordSoundPreference;
     PreferenceScreen keywordScreen;
 
-
-    String hostname = "222.239.254.253";
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, user_id, name, pw;
 
     @Override
@@ -79,14 +78,17 @@ public class SettingPreferenceFragment extends PreferenceFragment {
 
         prefs.registerOnSharedPreferenceChangeListener(prefListener);
 
-        SharedPreferences sharedPreferences= getActivity().getSharedPreferences("test", Context.MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-                ucAreaNo = sharedPreferences.getString("ar","");
-                ucDistribId = sharedPreferences.getString("di","");
-                ucAgencyId = sharedPreferences.getString("ag","");
-                ucMemCourId = sharedPreferences.getString("me","");
-                user_id = sharedPreferences.getString("id","");
-                name = sharedPreferences.getString("name","");
-                pw = sharedPreferences.getString("pw", "");
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("test", Context.MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
+        user_id = sharedPreferences.getString("id", "");
+        name = sharedPreferences.getString("name", "");
+        pw = sharedPreferences.getString("pw", "");
+
+        findPreference("user_id").setSummary(ucAreaNo + "-" + ucDistribId + "-" +
+                ucAgencyId + "-" + ucMemCourId + "\n" + user_id);
 
     }// onCreate
 
@@ -123,7 +125,8 @@ public class SettingPreferenceFragment extends PreferenceFragment {
 
         switch (key) {
             case "user_id":
-//                user_id.setSummary("ar" + "-" + "di" + "-" + "ag" + "-" + "me");
+//                findPreference("user_id").setSummary(ucAreaNo + "-" + ucDistribId + "-" +
+//                        ucAgencyId + "-" + ucMemCourId + "\n" + user_id);
                 break;
             case "user_pw":
                 Intent intent = new Intent(getActivity(), Change_pw.class);
@@ -160,53 +163,54 @@ public class SettingPreferenceFragment extends PreferenceFragment {
 
     public void Member_secession() {
 
-                try {
-                    LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
-                    service.secession(ucAreaNo,
-                            ucDistribId,
-                            ucAgencyId,
-                            ucMemCourId,
-                            user_id,
-                            pw,
-                            name)
-                            .enqueue(new retrofit2.Callback<Secession_Response>() {
-                                @Override
-                                public void onResponse(retrofit2.Call<Secession_Response> call,
-                                                       retrofit2.Response<Secession_Response> response) {
-                                    if (response.isSuccessful()) {
-                                        // 응답 성공
-                                        Log.i("tag", "응답 성공");
-                                        try {
+        try {
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.secession(ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId,
+                    user_id,
+                    pw,
+                    name)
+                    .enqueue(new retrofit2.Callback<Secession_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Secession_Response> call,
+                                               retrofit2.Response<Secession_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final Secession_Response secession_response = response.body();
 
-                                            Toast.makeText(getActivity(), "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    } else {
-                                        final ErrorDto error;
-                                        try {
-                                            error = new Gson().fromJson(response.errorBody().string(),
-                                                    ErrorDto.class);
-                                            Log.i("tag", error.message);
-                                            // 응답 실패
-                                            Log.i("tag", "응답실패");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-
-                                @Override
-                                public void onFailure(retrofit2.Call<Secession_Response> call, Throwable t) {
-
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                            });
+                            }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Secession_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

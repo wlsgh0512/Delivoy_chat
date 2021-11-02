@@ -18,11 +18,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.testcode.api.LoginService;
 import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.databinding.ActivityChatFriendsBinding;
 import com.example.testcode.model.Chat_Response;
+import com.example.testcode.model.Chat_invite_room_Response;
 import com.example.testcode.model.Code;
 import com.example.testcode.model.DataItem;
 import com.example.testcode.model.DataItem2;
@@ -44,15 +46,14 @@ import java.util.TimerTask;
  */
 
 public class Chat_friends extends AppCompatActivity {
-    String msg = "";
     ArrayList<DataItem> dataList = new ArrayList<>();
     MyAdapter adapter;
     ActionBar actionBar;
-    List<PollingChat_Response.Items.Rooms> items;
+    public List<PollingChat_Response.Items.Rooms> items;
     Timer timer;
     Handler handler;
 
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, name, getUiRoomNo, testUiRoomNo, uiTalkNo;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, name, getUiRoomNo, testUiRoomNo, uiTalkNo, testAcRoomTitle;
 
     ActivityChatFriendsBinding binding;
 
@@ -63,11 +64,9 @@ public class Chat_friends extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
-        msg = binding.sendMsg.getText().toString();
-
-//        get_talk();
 
         testUiRoomNo = getIntent().getStringExtra("uiRoomNo");
+        testAcRoomTitle = getIntent().getStringExtra("acRoomTitle");
 
         LinearLayoutManager manager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -85,6 +84,16 @@ public class Chat_friends extends AppCompatActivity {
         ucAgencyId = sharedPreferences.getString("ag","");
         ucMemCourId = sharedPreferences.getString("me","");
         name = sharedPreferences.getString("name","");
+
+        new Handler().postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+//                get_polling_talk();
+                binding.recyvlerv.scrollToPosition(dataList.size() - 1);
+            }
+        }, 100);// 0.6초 정도 딜레이를 준 후 시작
 
 
 //        timer = new Timer(true); //인자가 Daemon 설정인데 true 여야 죽지 않음.
@@ -145,8 +154,7 @@ public class Chat_friends extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        Intent intent1 = new Intent(Chat_friends.this, ListActivity.class);
-                        startActivity(intent1);
+                        User_delete();
                     }
                 });
                 AlertDialog alert = builder.create();
@@ -159,12 +167,13 @@ public class Chat_friends extends AppCompatActivity {
 
     // 전송 버튼을 눌렀을 때
     public void onClick_sendmsg(View view) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                binding.recyvlerv.scrollToPosition(dataList.size() - 1);
-            }
-        }, 200);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                binding.recyvlerv.scrollToPosition(dataList.size() - 1);
+//            }
+//        }, 200);
+
         send_msg();
         binding.sendMsg.setText("");
 
@@ -207,13 +216,8 @@ public class Chat_friends extends AppCompatActivity {
                                             send_msg_response.uiTalkNo,
                                             message,
                                             "", Code.ViewType.RIGHT_CONTENT));
-                                    binding.recyvlerv.getAdapter().notifyDataSetChanged();
                                     adapter.notifyDataSetChanged();
-
-//                                    SharedPreferences sp = getPreferences(MODE_PRIVATE);
-//                                    SharedPreferences.Editor editor = sp.edit();
-//                                    editor.putString("TalkNo", String.valueOf(send_msg_response.uiTalkNo));
-//                                    editor.commit();
+                                    binding.recyvlerv.scrollToPosition(dataList.size() - 1);
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -302,15 +306,13 @@ public class Chat_friends extends AppCompatActivity {
 
     public void get_polling_talk() {
         try {
-//            SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-//            uiTalkNo = sharedPreferences.getString("TalkNo", "");
 
-//            final int uiTalkNo = adapter.getLastItem().getTalkId() -1 ;
+            // 방어코드 작성.
+            final int uiTalkNo = adapter.getItemCount() > 0 ? adapter.getLastItem().getTalkId() : 0;
 
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
             service.pollingchat(
-//                    uiTalkNo,
-                    0,
+                    uiTalkNo,
                     testUiRoomNo,
                     ucAreaNo,
                     ucDistribId,
@@ -328,6 +330,8 @@ public class Chat_friends extends AppCompatActivity {
 
                                      items = pollingChat_response.items.astRooms;
 
+                                     actionBar.setTitle(testAcRoomTitle);
+
                                     for (int i = 0; i < items.size(); i++) {
                                         if (!ucMemCourId.equals(pollingChat_response.items.astRooms.get(i).ucMemCourId)) {
                                             // dataList (uiTalkNo, acTalkMesg, acRealName, ViewType.CONTENT)
@@ -341,8 +345,17 @@ public class Chat_friends extends AppCompatActivity {
                                                     items.get(i).acTalkMesg,
                                                     name, Code.ViewType.RIGHT_CONTENT));
                                         }
+
+
                                     }
 
+                                    adapter.notifyDataSetChanged();
+
+                                    if ( items.size() > 0 ) {
+                                        if(items.get(items.size() - 1).uiTalkNo > uiTalkNo) {
+                                            binding.recyvlerv.scrollToPosition(dataList.size() - 1);
+                                        }
+                                    }
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -373,6 +386,58 @@ public class Chat_friends extends AppCompatActivity {
         }
     }
 
+    public void User_delete(){
+        try {
+
+            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
+            service.delete_user(
+                    testUiRoomNo,
+                    ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
+                    ucMemCourId)
+                    .enqueue(new retrofit2.Callback<Chat_invite_room_Response>() {
+                        @Override
+                        public void onResponse(retrofit2.Call<Chat_invite_room_Response> call,
+                                               retrofit2.Response<Chat_invite_room_Response> response) {
+                            if (response.isSuccessful()) {
+                                // 응답 성공
+                                Log.i("tag", "응답 성공");
+                                try {
+                                    final Chat_invite_room_Response chat_invite_room_response = response.body();
+
+                                    Intent intent1 = new Intent(Chat_friends.this, ListActivity.class);
+                                    startActivity(intent1);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                final ErrorDto error;
+                                try {
+                                    error = new Gson().fromJson(response.errorBody().string(),
+                                            ErrorDto.class);
+                                    Log.i("tag", "" + error.message);
+                                    // 응답 실패
+                                    Log.i("tag", "응답실패");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(retrofit2.Call<Chat_invite_room_Response> call, Throwable t) {
+
+                        }
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -390,11 +455,10 @@ public class Chat_friends extends AppCompatActivity {
                 handler.post(new Runnable(){
                     public void run(){
                         get_polling_talk();
-                        binding.recyvlerv.scrollToPosition(dataList.size() - 1);
                     }
                 });
             }
-        }, 0, 100);
+        }, 0, 500);
     }
 
 
