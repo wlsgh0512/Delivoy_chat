@@ -10,12 +10,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.testcode.Chat_friends;
 import com.example.testcode.R;
@@ -26,6 +30,7 @@ import com.example.testcode.databinding.TestRoomlistBinding;
 import com.example.testcode.f1Adapter;
 import com.example.testcode.f2Adapter;
 import com.example.testcode.model.Chat_room_Response;
+import com.example.testcode.model.DataItem;
 import com.example.testcode.model.DataItem2;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
@@ -39,6 +44,7 @@ public class RoomList extends FrameLayout {
     private TestRoomlistBinding binding;
     com.example.testcode.f2Adapter f2Adapter;
     ArrayList<DataItem2> chat_room = new ArrayList<>();
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
 
     public RoomList(@NonNull Context context) {
         super(context);
@@ -74,7 +80,28 @@ public class RoomList extends FrameLayout {
         f2Adapter = new f2Adapter(chat_room);
         binding.rvList1.setAdapter(f2Adapter);
 
-        addView(binding.wrapper);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+        ucAreaNo = sharedPreferences.getString("ar", "");
+        ucDistribId = sharedPreferences.getString("di", "");
+        ucAgencyId = sharedPreferences.getString("ag", "");
+        ucMemCourId = sharedPreferences.getString("me", "");
+
+        binding.wrapperr.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                /* swipe 시 진행할 동작 */
+                chat_room.clear();
+                fetchRoomList(ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId);
+                f2Adapter.notifyDataSetChanged();
+
+
+                /* 업데이트가 끝났음을 알림 */
+                binding.wrapperr.setRefreshing(false);
+            }
+        });
+
+        addView(binding.wrapperr);
+
     }
 
     public void setOnItemClickListener(com.example.testcode.f2Adapter.OnItemClickListener listener) {
@@ -100,13 +127,7 @@ public class RoomList extends FrameLayout {
 
                                     List<Chat_room_Response.Items.Rooms> items = chat_room_response.items.astRooms;
                                     for (int i = 0; i < items.size(); i++) {
-                                        chat_room.add(new DataItem2(items.get(i).acRoomTitle, items.get(i).uiRoomNo));
-
-//                                        SharedPreferences sp = getActivity().getPreferences(MODE_PRIVATE);
-//                                        SharedPreferences.Editor editor = sp.edit();
-//                                        editor.putString("roomNo", items.get(i).uiRoomNo);
-//                                        editor.commit();
-
+                                        chat_room.add(new DataItem2(items.get(i).acRoomTitle, items.get(i).uiRoomNo, ""));
                                     }
                                     f2Adapter.notifyDataSetChanged();
 
