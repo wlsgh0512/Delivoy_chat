@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
   <TextView
       android:id="@+id/tv_real_name"
       android:layout_width="wrap_content"
@@ -10,14 +11,14 @@
       android:layout_above="@+id/input_real_name"
       android:layout_alignParentLeft="true"
       android:layout_centerInParent="true"
-      android:layout_marginLeft="81dp"
-      android:layout_marginBottom="2dp"
+      android:layout_marginLeft="81sp"
+      android:layout_marginBottom="2sp"
       android:text="이름" />
 
   <EditText
       android:id="@+id/input_real_name"
-      android:layout_width="250dp"
-      android:layout_height="48dp"
+      android:layout_width="250sp"
+      android:layout_height="48sp"
       android:layout_above="@id/tv_phone_number"
       android:layout_centerInParent="true"
       android:background="@drawable/memo_border" />

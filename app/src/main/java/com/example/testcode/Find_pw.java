@@ -49,7 +49,7 @@ public class Find_pw extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
-        loadPreference();
+//        loadPreference();
 
         SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
         ucAreaNo = sharedPreferences.getString("ar", "");
@@ -72,7 +72,6 @@ public class Find_pw extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "성공", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG).show();
-            ;
         }
 
 

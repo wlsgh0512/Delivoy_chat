@@ -79,17 +79,23 @@ public class Find_id extends AppCompatActivity {
 
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Find_id.this);
 
-                                    builder.setTitle("회원님의 아이디는").setMessage("코드 방식 : "
-                                            + loginResponse.ucAreaNo + "-"
-                                            + loginResponse.ucDistribId + "-"
-                                            + loginResponse.ucAgencyId + "-"
-                                            + loginResponse.ucMemCourId + " ,\n"
-                                            + "아이디 방식 : " + loginResponse.acUserId + " 입니다.");
+                                    if(!binding.inputRealName.getText().toString().equals(loginResponse.acRealName)
+                                    || !binding.inputPhoneNumber.getText().toString().equals(loginResponse.acCellNo)) {
+                                        Toast.makeText(getApplicationContext(), "일치하는 정보가 없습니다.",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
 
-                                    AlertDialog alertDialog = builder.create();
+                                        builder.setTitle("회원님의 아이디는").setMessage("코드 방식 : "
+                                                + loginResponse.ucAreaNo + "-"
+                                                + loginResponse.ucDistribId + "-"
+                                                + loginResponse.ucAgencyId + "-"
+                                                + loginResponse.ucMemCourId + " ,\n"
+                                                + "아이디 방식 : " + loginResponse.acUserId + " 입니다.");
 
-                                    alertDialog.show();
+                                        AlertDialog alertDialog = builder.create();
 
+                                        alertDialog.show();
+                                    }
 
 
                                 } catch (Exception e) {

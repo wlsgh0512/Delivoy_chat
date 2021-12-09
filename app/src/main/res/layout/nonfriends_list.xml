@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wrappera"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:padding="3dp"
-    >
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:orientation="vertical">
+            android:layout_marginTop="5dp">
 
             <TextView
-                android:id="@+id/friends"
+                android:id="@+id/allusers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
                 android:maxLength="150"
                 android:maxLines="15"
                 android:padding="10dp"
-                android:text="친구 목록"
+                android:text="모든유저"
                 android:textColor="#000000"
                 android:textSize="15dp" />
 
+
         </LinearLayout>
-        </LinearLayout>
+
     </LinearLayout>
+
+
+
+
+
+
+

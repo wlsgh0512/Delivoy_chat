@@ -33,14 +33,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/**
- * 채팅 메인 -> 3dot -> 설정 -> 비밀번호 변경
- * postman에서 실제로 데이터가 바뀌는거 확인.
- * 여기서도 dialog가 안뜸.
- * Chanege_info와 동일하게 휴대전화인증 미구현.
- * errorcode 500
- * NullPointerException: println needs a message
- */
 
 public class Change_pw extends AppCompatActivity {
     String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, pw, name;
@@ -80,9 +72,9 @@ public class Change_pw extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                 } else if (binding.inputNewPw.getText().toString().equals(binding.inputNowPw.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "현재 비밀번호와 일치합니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Change_pw();
                 }
-
-                Change_pw();
                 break;
 
         }
@@ -92,14 +84,13 @@ public class Change_pw extends AppCompatActivity {
 
     public void Change_pw() {
         try {
+            final String newPw = binding.inputNewPw.getText().toString();
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
             service.changepw(ucAreaNo,
                     ucDistribId,
                     ucAgencyId,
                     ucMemCourId,
-                    binding.inputNewPw.getText().toString(),
-                    pw,
-                    name)
+                    newPw)
                     .enqueue(new retrofit2.Callback<Join_Response>() {
                         @Override
                         public void onResponse(retrofit2.Call<Join_Response> call,
@@ -110,13 +101,9 @@ public class Change_pw extends AppCompatActivity {
                                 try {
 
                                     Toast.makeText(getApplicationContext(), "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show();
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(Change_pw.this);
-//
-//                                    builder.setTitle("비밀번호 변경이 완료되었습니다.");
-//
-//                                    AlertDialog alertDialog = builder.create();
-//
-//                                    alertDialog.show();
+                                    binding.inputNowPw.setText("");
+                                    binding.inputNewPw.setText("");
+                                    binding.inputNewPwCheck.setText("");
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.example.testcode;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,6 +27,10 @@ import com.example.testcode.model.Chat_room_Response;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.User_listup_Response;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,21 +47,19 @@ public class ListTest extends AppCompatActivity {
     ArrayList<String> listlist = new ArrayList<>();
     private ArrayAdapter Fadapter;
     String testUiRoomNo, ucDistribId, ucAgencyId, ucAreaNo, ucMemCourId;
-    List<User_listup_Response.Items.AstUser> items;
+    public List<User_listup_Response.Items.AstUser> items;
     ActionBar actionBar;
+
+    ActivityListUpBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_up);
 
-        /**
-         * 조회에서 뒤로가기 했을 때 Chat_friends로
-         * Chat_friends를 새로 진입하게 되면서 uiRoomNo 문제 ?
-         */
-//        actionBar = getSupportActionBar();  // 제목줄 객체 얻어오기
-//        actionBar.setTitle("참여중인 사용자 조회");  // 액션바 제목설정
-//        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar = getSupportActionBar();  // 제목줄 객체 얻어오기
+        actionBar.setTitle("참여중인 사용자 조회");  // 액션바 제목설정
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Fadapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listlist) ;
 
@@ -67,8 +73,6 @@ public class ListTest extends AppCompatActivity {
         ucAgencyId = sharedPreferences.getString("ag", "");
 
         list_Test();
-        Fadapter.notifyDataSetChanged();
-
 
         listtest.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -77,6 +81,11 @@ public class ListTest extends AppCompatActivity {
                 SharedPreferences spf = getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor edi = spf.edit();
                 edi.putInt("position", i);
+                edi.commit();
+
+                SharedPreferences perf = getPreferences(MODE_PRIVATE);
+                SharedPreferences.Editor edit = perf.edit();
+                edi.putString("memId", items.get(i).ucMemCourId);
                 edi.commit();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListTest.this);
@@ -91,16 +100,27 @@ public class ListTest extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         User_delete();
-                        return;
+//                        return;
                     }
                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+
                 return false;
             }
         });
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void list_Test(){
@@ -121,15 +141,18 @@ public class ListTest extends AppCompatActivity {
 
                                     for (int i = 0; i < items.size(); i++) {
                                         listlist.add(items.get(i).acRealName);
-
-                                        SharedPreferences spf = getPreferences(MODE_PRIVATE);
-                                        SharedPreferences.Editor edi = spf.edit();
-                                        edi.putString("memId", items.get(i).ucMemCourId);
-                                        edi.commit();
                                     }
                                     Fadapter.notifyDataSetChanged();
 
-
+                                    SharedPreferences sp= getSharedPreferences("joinName", MODE_PRIVATE);
+                                    SharedPreferences.Editor mEdit1= sp.edit();
+                                    mEdit1.putInt("Status_size",listlist.size()); /*sKey is an array*/
+                                    for(int i = 0; i < listlist.size(); i++)
+                                    {
+                                        mEdit1.remove("Status_" + i);
+                                        mEdit1.putString("Status_" + i, listlist.get(i));
+                                    }
+                                    mEdit1.commit();
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -146,12 +169,10 @@ public class ListTest extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
-
                         }
 
                         @Override
                         public void onFailure(retrofit2.Call<User_listup_Response> call, Throwable t) {
-
                         }
                     });
 

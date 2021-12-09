@@ -1,92 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:layout_height="match_parent">
 
-
-
-    <EditText
-        android:id="@+id/join_id"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:background="@drawable/memo_border"
-        android:hint="사용자 ID"
-        android:layout_marginTop="125dp"
-        android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/tv_userId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="사용자 ID"
+        />
 
     <EditText
-        android:id="@+id/join_pw"
+        android:id="@+id/input_userId"
         android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_userId"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"/>
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_userId"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="비밀번호" />
+
+    <EditText
+        android:id="@+id/input_pw"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/user_id"
+        android:layout_centerInParent="true"
         android:background="@drawable/memo_border"
-        android:hint="비밀번호"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
         android:inputType="textPassword"/>
 
+    <TextView
+        android:id="@+id/tv_pwCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_pw"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="비밀번호 확인" />
     <EditText
-        android:id="@+id/join_name"
+        android:id="@+id/input_pwCheck"
         android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_pwCheck"
+        android:layout_centerInParent="true"
         android:background="@drawable/memo_border"
-        android:hint="이름 (실명)"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center"/>
+        android:inputType="textPassword"/>
+
+    <TextView
+        android:id="@+id/tv_realName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_pwCheck"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="이름" />
 
     <EditText
-        android:id="@+id/join_nickname"
+        android:id="@+id/input_realName"
         android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_realName"
+        android:layout_centerInParent="true"
         android:background="@drawable/memo_border"
-        android:hint="별명 (애칭)"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center"/>
+        android:privateImeOptions="defaultInputmode=korean"/>
+
+    <TextView
+        android:id="@+id/tv_nickName"
+        android:layout_below="@id/input_realName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="별명" />
 
     <EditText
-        android:id="@+id/join_phone_number"
+        android:id="@+id/input_nickName"
         android:layout_width="250dp"
-        android:layout_height="50dp"
-        android:background="@drawable/memo_border"
-        android:hint="휴대전화번호"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:inputType="number"/>
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_nickName"
+        android:privateImeOptions="defaultInputmode=korean"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border" />
+
+    <TextView
+        android:id="@+id/tv_phoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_nickName"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="휴대전화번호" />
 
     <EditText
-        android:id="@+id/join_mail"
+        android:id="@+id/input_phoneNumber"
         android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_phoneNumber"
+        android:layout_centerInParent="true"
         android:background="@drawable/memo_border"
-        android:hint="이메일주소"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center"
-        android:inputType="textEmailAddress"/>
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/key_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/input_phoneNumber"
+        android:layout_toRightOf="@id/input_phoneNumber"
+        android:text="인증" />
+    <TextView
+        android:id="@+id/tv_emailAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_phoneNumber"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="81dp"
+        android:layout_marginBottom="2dp"
+        android:text="이메일 주소" />
+
+    <EditText
+        android:id="@+id/input_emailAddress"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv_emailAddress"
+        android:layout_centerInParent="true"
+        android:background="@drawable/memo_border"
+        android:inputType="textEmailAddress" />
 
     <TextView
         android:id="@+id/authority"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:background="@drawable/memo_border"
-        android:text="일반 사용자"
-        android:gravity="center"
+        android:layout_below="@id/input_emailAddress"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_gravity="center"/>
+        android:background="@drawable/memo_border"
+        android:gravity="center"
+        android:text="일반 사용자" />
 
     <Button
-        android:onClick="onclick_join_member"
-        android:id="@+id/btn_join"
+        android:id="@+id/btn_joinMember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="확인"
-        android:layout_gravity="center"/>
+        android:layout_below="@id/authority"
+        android:layout_centerInParent="true"
+        android:text="확인" />
 
-    <!--    <Spinner-->
-    <!--        android:id="@+id/spinner"-->
-    <!--        android:layout_width="250dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="@drawable/memo_border"/>-->
-
-
-</LinearLayout>
+</RelativeLayout>

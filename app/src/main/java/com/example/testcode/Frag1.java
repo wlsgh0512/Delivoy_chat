@@ -52,6 +52,7 @@ public class Frag1 extends Fragment {
 
     f1Adapter f1Adapter;
 
+    public List<FriendsResponse.Items.Rooms> items;
 
     //    public static Context context_frag1;
     public Frag1() {
@@ -86,14 +87,8 @@ public class Frag1 extends Fragment {
 
         binding.friendList.fetchFriendList(ucAreaNo,ucDistribId,ucAgencyId,ucMemCourId);
 
-//        binding.friendList.setOnItemClickListener(new f1Adapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View v, int position) {
-//                Intent intent = new Intent(getActivity(), Chat_friends.class);
-//                intent.putExtra("uiRoomNo", position + 1);
-//                startActivity(intent);
-//            }
-//        });
+
+
     }
 
 

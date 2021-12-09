@@ -13,17 +13,21 @@
         android:layout_height="wrap_content"
         android:hint="채팅방 이름을 입력하세요."/>
 
-    <EditText
-        android:id="@+id/find_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="이름(초성), 전화번호 검색"/>
+<!--    <EditText-->
+<!--        android:id="@+id/find_list"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="이름(초성), 전화번호 검색"/>-->
 
-    <com.example.testcode.components.FriendList
-        android:id="@+id/friend_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+<!--    <com.example.testcode.components.FriendList-->
+<!--        android:id="@+id/friend_list"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent" />-->
 
+    <com.example.testcode.components.RoomList
+        android:id="@+id/room_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
 

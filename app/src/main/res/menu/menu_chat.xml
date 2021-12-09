@@ -6,7 +6,8 @@
 <!--        android:id="@+id/menu"-->
 <!--        android:icon="@drawable/navi_drawer"-->
 <!--        app:showAsAction="ifRoom"-->
-        android:title="asdasd"/>
+<!--        android:title="asdasd"/>-->
+
     <item
         android:id="@+id/list"
         android:title="참여중인 사용자"

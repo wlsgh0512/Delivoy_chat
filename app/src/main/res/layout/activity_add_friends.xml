@@ -16,9 +16,8 @@
         android:textStyle="bold"
         android:textSize="15dp"/>
 
-    <ListView
-        android:id="@+id/all_user"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        android:layout_height="match_parent" />
 </LinearLayout>

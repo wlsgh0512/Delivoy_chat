@@ -1,10 +1,13 @@
 package com.example.testcode;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 
 public class SettingActivity extends AppCompatActivity {
@@ -20,5 +23,18 @@ public class SettingActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
     }
 
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

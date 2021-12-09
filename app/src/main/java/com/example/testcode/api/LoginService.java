@@ -6,6 +6,7 @@ import com.example.testcode.model.Chat_Response;
 import com.example.testcode.model.Create_chat_Response;
 import com.example.testcode.model.Chat_invite_room_Response;
 import com.example.testcode.model.Chat_room_Response;
+import com.example.testcode.model.DeleteMsgResponse;
 import com.example.testcode.model.Delete_Room_Response;
 import com.example.testcode.model.FriendsResponse;
 import com.example.testcode.model.Join_Response;
@@ -28,22 +29,27 @@ public interface LoginService {
     /**
      * 0x100 Login 관리
      */
-    @GET("login/login_no_get.php")  // 회원번호 Login
+
+    // 회원번호 Login
+    @GET("login/login_no_get.php")
     Call<LoginResponse> oldLogin(@Query("ucAreaNo") String ucAreaNo,
                                  @Query("ucDistribId") String ucDistribId,
                                  @Query("ucAgencyId") String ucAgencyId,
                                  @Query("ucMemCourId") String ucMemCourId,
                                  @Query("acPassword") String acPassword);
 
-    @GET("login/login_id_get.php")  // 사용자 ID Login
+    // 사용자 ID Login
+    @GET("login/login_id_get.php")
     Call<LoginResponse> idLogin(@Query("acUserId") String acUserId,
                                 @Query("acPassword") String acPassword);
 
-    @GET("login/find_id_get.php")   // ID 찾기
+    // ID 찾기
+    @GET("login/find_id_get.php")
     Call<LoginResponse> findId(@Query("acRealName") String acRealName,
                                @Query("acCellNo") String acCellNo);
 
-    @GET("login/find_pw_get.php")   // PW 찾기
+    // PW 찾기
+    @GET("login/find_pw_get.php")
     Call<LoginResponse> findPw(@Query("ucAreaNo") String ucAreaNo,
                                @Query("ucDistribId") String ucDistribId,
                                @Query("ucAgencyId") String ucAgencyId,
@@ -56,8 +62,10 @@ public interface LoginService {
     /**
      * 0x200 User 관리
      */
+
+    // 신규 가입
     @FormUrlEncoded
-    @POST("users/user_post.php")    // 신규 가입
+    @POST("users/user_post.php")
     Call<Join_Response> join(@Field("acUserId") String acUserId,
                              @Field("acPassword") String acPassword,
                              @Field("acRealName") String acRealName,
@@ -66,8 +74,9 @@ public interface LoginService {
                              @Field("acEmailAddress") String acEmailAddress,
                              @Field("ucAccessFlag") String ucAccessFlag);
 
+    // 정보 수정
     @FormUrlEncoded
-    @POST("users/user_put.php")     // 정보 수정
+    @POST("users/user_put.php")
     Call<Join_Response> change(@Field("ucAreaNo") String ucAreaNo,
                                @Field("ucDistribId") String ucDistribId,
                                @Field("ucAgencyId") String ucAgencyId,
@@ -77,18 +86,18 @@ public interface LoginService {
                                @Field("acEmailAddress") String acEmailAdd,
                                @Field("ucAccessFlag") String ucAccessFlag);
 
+    // PW 수정
     @FormUrlEncoded
-    @POST("users/user_put.php")     // PW 수정
+    @POST("users/user_put.php")
     Call<Join_Response> changepw(@Field("ucAreaNo") String ucAreaNo,
-                                      @Field("ucDistribId") String ucDistribId,
-                                      @Field("ucAgencyId") String ucAgencyId,
-                                      @Field("ucMemCourId") String ucMemCourId,
-                                      @Field("acUserId") String acUserId,
-                                      @Field("acPassword") String acPassword,
-                                      @Field("acRealName") String acRealName);
+                                 @Field("ucDistribId") String ucDistribId,
+                                 @Field("ucAgencyId") String ucAgencyId,
+                                 @Field("ucMemCourId") String ucMemCourId,
+                                 @Field("acPassword") String acPassword);
 
+    // 동의서
     @FormUrlEncoded
-    @POST("users/user_agree.php")     // 동의서
+    @POST("users/user_agree.php")
     Call<User_Consent_Response> agree(@Field("ucAreaNo") String ucAreaNo,
                                       @Field("ucDistribId") String ucDistribId,
                                       @Field("ucAgencyId") String ucAgencyId,
@@ -96,8 +105,9 @@ public interface LoginService {
                                       @Field("ucAgreeOption") String ucAgreeOption,
                                       @Field("ucThirdPartyOption") String ucThirdPartyOption);
 
+    // 회원 탈퇴
     @FormUrlEncoded
-    @POST("users/user_delete.php")     // 회원 탈퇴
+    @POST("users/user_delete.php")
     Call<Secession_Response> secession(@Field("ucAreaNo") String ucAreaNo,
                                        @Field("ucDistribId") String ucDistribId,
                                        @Field("ucAgencyId") String ucAgencyId,
@@ -106,7 +116,8 @@ public interface LoginService {
                                        @Field("acPassword") String acPassword,
                                        @Field("acRealName") String acRealName);
 
-    @GET("users/user_fetch.php")        // 사용자 모두 조회
+    // 사용자 모두 조회
+    @GET("users/user_fetch.php")
     Call<User_Response> all_user(@Query("ucAreaNo") String ucAreaNo,
                                  @Query("ucDistribId") String ucDistribId,
                                  @Query("ucAgencyId") String ucAgencyId,
@@ -115,10 +126,16 @@ public interface LoginService {
     /**
      * 0x300 Room 관리
      */
+
+
     @FormUrlEncoded
     @POST("rooms/room_post.php")        // 새로운 채팅방 개설
     Call<Create_chat_Response> Create_chat(@Field("acRoomTitle") String acRoomTitle,
-                                           @Field("acImageUrl") String acImageUrl);
+                                           @Field("acImageUrl") String acImageUrl,
+                                           @Field("ucAreaNo") String ucAreaNo,
+                                           @Field("ucDistribId") String ucDistribId,
+                                           @Field("ucAgencyId") String ucAgencyId,
+                                           @Field("ucMemCourId") String ucMemCourId);
 
     @FormUrlEncoded
     @POST("rooms/room_put.php")         // 새로운 채팅방 개설
@@ -192,6 +209,12 @@ public interface LoginService {
                                  @Query("ucAgencyId") String ucAgencyId,
                                  @Query("ucMemCourId") String ucMemCourId);
 
+    @GET("friends/non_friend_fetch.php")    // 나와 친구가 아닌 사용자 모두 조회
+    Call<FriendsResponse> nonFriend(@Query("ucAreaNo") String ucAreaNo,
+                                 @Query("ucDistribId") String ucDistribId,
+                                 @Query("ucAgencyId") String ucAgencyId,
+                                 @Query("ucMemCourId") String ucMemCourId);
+
     /**
      * 0x600 Talk 관리
      */
@@ -203,6 +226,17 @@ public interface LoginService {
                                      @Field("ucAgencyId") String ucAgencyId,
                                      @Field("ucMemCourId") String ucMemCourId,
                                      @Field("acTalkMesg") String acTalkMesg);
+
+    @FormUrlEncoded
+    @POST("talks/talk_delete.php")      // 채팅 톡 삭제
+    Call<DeleteMsgResponse> delete_msg(@Field("uiTalkNo") String uiTalkNo,
+                                       @Field("uiRoomNo") String uiRoomNo,
+                                       @Field("ucAreaNo") String ucAreaNo,
+                                       @Field("ucDistribId") String ucDistribId,
+                                       @Field("ucAgencyId") String ucAgencyId,
+                                       @Field("ucMemCourId") String ucMemCourId);
+
+
 
     @GET("talks/talk_get.php")          // 채팅 톡 조회 (1건 조회)
     Call<Chat_Response> chat(@Query("uiTalkNo") String uiTalkNo,

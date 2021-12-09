@@ -1,11 +1,19 @@
 package com.example.testcode;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.testcode.databinding.ActivityChatFriendsBinding;
+import com.example.testcode.databinding.ActivityTextSizeBinding;
 
 /**
  * 텍스트 크기 조절하기.
@@ -16,34 +24,30 @@ import android.widget.TextView;
 
 public class TextSize extends AppCompatActivity {
 
-    TextView tvTextSizePreview;
-    SeekBar sbTextSize;
+    ActivityTextSizeBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_text_size);
+        binding = ActivityTextSizeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        tvTextSizePreview = (TextView) findViewById(R.id.tvTextSizePreview);
-        sbTextSize = (SeekBar) findViewById(R.id.sbTextSize);
-
-        int size = 13;
-        sbTextSize.setMax(25);
-        sbTextSize.setProgress(size);
-        tvTextSizePreview.setTextSize((float)13);
+        int size = 10;
+        binding.sbTextSize.setMax(20);
+        binding.sbTextSize.setProgress(size);
+        binding.tvTextSizePreview.setTextSize((float)10);
 
         ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
         actionBar.setTitle("텍스트 크기");  //액션바 제목설정
 
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
-        sbTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        binding.sbTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                tvTextSizePreview.setTextSize(progress);
-
-                // seekbar 조절만 되고 옆에 textview 조절한 값 settext 안됨
-                // 실제 글씨 크기 바꾸는 것 적용 안됨.
+                binding.tvTextSizePreview.setTextSize(progress);
+                int ratio = progress * 5;
+                binding.tvTextSize.setText(String.format("%s%%", ratio));
             }
 
             @Override
@@ -56,5 +60,30 @@ public class TextSize extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_chat_invite_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        switch (item.getItemId()) {
+            case R.id.create_chat:
+
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public int getRatioByProgress(int progress) {
+        progress += 10;
+        progress *= 5;
+        return progress;
     }
 }

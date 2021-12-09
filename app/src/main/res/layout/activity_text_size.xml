@@ -40,14 +40,13 @@
                     android:id="@+id/tvTextSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100%"
+                    android:text="50%"
                     android:textSize="16dp" />
                 <SeekBar
                     android:id="@+id/sbTextSize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="30"
-                    android:progress="10"
                     />
             </LinearLayout>
         </LinearLayout>

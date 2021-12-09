@@ -17,5 +17,19 @@ public class RetrofitConfig {
     public Retrofit getRetrofit() {
         return retrofit;
     }
-
 }
+
+//public class RetrofitConfig {
+//
+//    private static Retrofit retrofit = null;
+//
+//    public static Retrofit getClient() {
+//        if (retrofit == null) {
+//            retrofit = new Retrofit.Builder()
+//                    .baseUrl("http://222.239.254.253/chatt/app/")
+//                    .addConverterFactory(GsonConverterFactory.create())
+//                    .build();
+//        }
+//        return retrofit;
+//    }
+//}

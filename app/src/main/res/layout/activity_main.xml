@@ -11,7 +11,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:text="DeliVoy"
+        android:text="ChatProgram"
         android:gravity="center"
         android:textSize="24sp"
         android:textColor="#1F51B7"/>
@@ -20,8 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/rb_old_login"
@@ -41,8 +40,7 @@
             android:background="@drawable/bg_segment_radio_button"
             android:button="@android:color/transparent"
             android:text="아이디 방식"
-            android:textAlignment="center"
-            />
+            android:textAlignment="center" />
     </RadioGroup>
 
     <LinearLayout
@@ -50,7 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/trade_detail_card_bottom_margin"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="invisible">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtUserAreaNo"
@@ -126,7 +125,8 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="18dp"
             android:singleLine="true"
-            android:hint="아이디 입력"/>
+            android:hint="아이디 입력"
+            android:visibility="visible"/>
 
         <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/user_pw"
@@ -157,8 +157,7 @@
             android:layout_marginTop="4dp"
             android:text="자동 로그인"
             android:textSize="16dp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
 
 
         <LinearLayout

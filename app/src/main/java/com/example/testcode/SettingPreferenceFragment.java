@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,6 +94,7 @@ public class SettingPreferenceFragment extends PreferenceFragment {
 
     }// onCreate
 
+
     SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -149,6 +152,8 @@ public class SettingPreferenceFragment extends PreferenceFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Member_secession();
+                        Intent intent2 = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent2);
                         return;
                     }
                 });

@@ -128,8 +128,19 @@ public class RoomList extends FrameLayout {
                                     List<Chat_room_Response.Items.Rooms> items = chat_room_response.items.astRooms;
                                     for (int i = 0; i < items.size(); i++) {
                                         chat_room.add(new DataItem2(items.get(i).acRoomTitle, items.get(i).uiRoomNo, ""));
+//                                        f2Adapter.notifyItemInserted(i);
                                     }
                                     f2Adapter.notifyDataSetChanged();
+
+                                    SharedPreferences sp= getContext().getSharedPreferences("roomName", MODE_PRIVATE);
+                                    SharedPreferences.Editor mEdit1= sp.edit();
+                                    mEdit1.putInt("Status_size",chat_room.size());
+                                    for(int i = 0; i < chat_room.size(); i++)
+                                    {
+                                        mEdit1.remove("Status_" + i);
+                                        mEdit1.putString("Status_" + i, chat_room.get(i).getContent());
+                                    }
+                                    mEdit1.commit();
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

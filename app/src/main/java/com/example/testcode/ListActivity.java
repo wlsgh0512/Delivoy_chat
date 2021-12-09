@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.testcode.api.LoginService;
+import com.example.testcode.components.BackPressHandler;
 import com.example.testcode.config.RetrofitConfig;
 import com.example.testcode.databinding.FriendsListBinding;
 import com.example.testcode.model.ErrorDto;
@@ -36,16 +37,12 @@ import java.util.TimerTask;
  */
 
 public class ListActivity extends AppCompatActivity {
-    ArrayList<String> item = new ArrayList<String>();
 
-    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId;
+    String ucAreaNo, ucDistribId, ucAgencyId, ucMemCourId, pw;
 
     FriendsListBinding binding;
 
-    Frag1 frag1;
-
-    Timer timer;
-    Handler handler;
+    private BackPressHandler backPressHandler = new BackPressHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +53,6 @@ public class ListActivity extends AppCompatActivity {
         binding.tabs.addTab(binding.tabs.newTab().setText("친구"));
         binding.tabs.addTab(binding.tabs.newTab().setText("채팅"));
         binding.tabs.setTabGravity(binding.tabs.GRAVITY_FILL);
-
-        binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-//                    Toast.makeText(ListActivity.this, "Tab 1", Toast.LENGTH_SHORT).show();
-                } else if (tab.getPosition() == 1) {
-//                    Toast.makeText(ListActivity.this, "Tab 2", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
 
         //Adapter
         final ViewPagerAdapter myPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -98,6 +74,7 @@ public class ListActivity extends AppCompatActivity {
         ucDistribId = sharedPreferences.getString("di", "");
         ucAgencyId = sharedPreferences.getString("ag", "");
         ucMemCourId = sharedPreferences.getString("me", "");
+        pw = sharedPreferences.getString("pw","");
 
     }
 
@@ -152,78 +129,19 @@ public class ListActivity extends AppCompatActivity {
                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("auto", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void Friends_list1() {
-        try {
-            LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
-            service.friend(ucAreaNo,
-                    ucDistribId,
-                    ucAgencyId,
-                    ucMemCourId)
-                    .enqueue(new retrofit2.Callback<FriendsResponse>() {
-                        @Override
-                        public void onResponse(retrofit2.Call<FriendsResponse> call,
-                                               retrofit2.Response<FriendsResponse> response) {
-                            if (response.isSuccessful()) {
-                                // 응답 성공
-                                Log.i("tag", "응답 성공");
-                                try {
-                                    final FriendsResponse friendsResponse = response.body();
-//                                    item.add(friendsResponse.acRealName);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                final ErrorDto error;
-                                try {
-                                    error = new Gson().fromJson(response.errorBody().string(),
-                                            ErrorDto.class);
-                                    Log.i("tag", error.message);
-                                    // 응답 실패
-                                    Log.i("tag", "응답실패");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(retrofit2.Call<FriendsResponse> call, Throwable t) {
-
-                        }
-                    });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void onBackPressed() {
+        backPressHandler.onBackPressed("뒤로가기 버튼을 한번 더 누르면 종료됩니다.", 3000);
     }
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        timer.cancel();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        timer = new Timer(true); //인자가 Daemon 설정인데 true 여야 죽지 않음.
-//        handler = new Handler();
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                handler.post(new Runnable(){
-//                    public void run(){
-//                    }
-//                });
-//            }
-//        }, 0, 500);
-//    }
-
 
 }

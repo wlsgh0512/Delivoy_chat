@@ -161,9 +161,9 @@ public class User_Consent extends AppCompatActivity {
 
 
             agreement();
-//
-//            Intent intent = new Intent(User_Consent.this, ListActivity.class);
-//            startActivity(intent);
+
+            Intent intent = new Intent(User_Consent.this, ListActivity.class);
+            startActivity(intent);
 
         }
     }

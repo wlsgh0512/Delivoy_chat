@@ -2,6 +2,7 @@ package com.example.testcode;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,21 +18,30 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.testcode.api.LoginService;
+import com.example.testcode.components.FriendList;
 import com.example.testcode.config.RetrofitConfig;
+import com.example.testcode.databinding.F1FriendsListBinding;
+import com.example.testcode.databinding.FragmentFrag1Binding;
+import com.example.testcode.databinding.FriendListBinding;
 import com.example.testcode.model.Add_Friends_Response;
 import com.example.testcode.model.DataItem2;
 import com.example.testcode.model.DataItem2;
 import com.example.testcode.model.ErrorDto;
 import com.example.testcode.model.FriendsResponse;
 import com.example.testcode.model.MyAdapter;
+import com.example.testcode.model.NonFriendsAdapter;
+import com.example.testcode.model.NonFriendsData;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class f1Adapter extends RecyclerView.Adapter{
 
@@ -41,7 +51,12 @@ public class f1Adapter extends RecyclerView.Adapter{
     Context context;
     View view;
 
-    public f1Adapter(ArrayList<DataItem2> friends_name) {
+    private MyApplication application;
+
+    private Set<DataItem2> mAll = new HashSet<>();
+
+    public f1Adapter(
+            ArrayList<DataItem2> friends_name) {
         f1List = friends_name;
 
     }
@@ -69,46 +84,73 @@ public class f1Adapter extends RecyclerView.Adapter{
         context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.f1_friends_list, parent, false);
+        application = (MyApplication) context.getApplicationContext();
+
         return new f1Holder(view);
 
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((f1Holder) holder).friends.setText(f1List.get(position).getContent());
+        final DataItem2 data = f1List.get(position);
+        ((f1Holder) holder).friends.setText(data.getContent());
 
-        ((f1Holder) holder).friends.setOnClickListener(view -> {
-            Intent intent = new Intent(view.getContext(), Chat_friends.class);
-            intent.putExtra("uiRoomNo", f1List.get(position).getRno());
-            view.getContext().startActivity(intent);
+        if ( application.getCurrentActivity() instanceof ListActivity) {
+            ((f1Holder) holder).friends.setOnClickListener(view -> {
+                Intent intent = new Intent(view.getContext(), Chat_friends.class);
+                intent.putExtra("uiRoomNo", data.getRno());
+                view.getContext().startActivity(intent);
+            });
 
-        });
+            ((f1Holder) holder).friends.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    SharedPreferences spf = view.getContext().getSharedPreferences("cour", MODE_PRIVATE);
+                    SharedPreferences.Editor edi = spf.edit();
+                    edi.putString("FriMemCour", data.getMemCour());
+                    edi.commit();
 
-        ((f1Holder) holder).friends.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setMessage("친구 목록에서 삭제하시겠습니까?")
-                        .setCancelable(true)
-                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                return;
-                            }
-                        });
-                builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        DeleteFriends();
-                        return;
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
-                return true;
-            }
-        });
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setMessage(data.getContent() + "를 친구 목록에서 삭제하시겠습니까?")
+                            .setCancelable(true)
+                            .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    return;
+                                }
+                            });
+                    builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            SharedPreferences spf = view.getContext().getSharedPreferences("delete_pos", MODE_PRIVATE);
+                            SharedPreferences.Editor edi = spf.edit();
+                            edi.putInt("fposition", position);
+                            edi.commit();
 
+                            DeleteFriends();
+                            return;
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    return true;
+                }
+            });
+        }
+//        if ( application.getCurrentActivity() instanceof Chat_invite_room ) {
+//            (holder.itemView).setBackgroundColor(mAll.contains(data) ? Color.LTGRAY : Color.WHITE);
+//
+//            ((f1Holder) holder).friends.setOnClickListener(view ->
+//            {
+//                if ( mAll.contains(data))
+//                    mAll.remove(data);
+//                else
+//                    mAll.add(data);
+//
+//                this.notifyDataSetChanged();
+//        });
+//    }
     }
+
 
     @Override
     public int getItemCount() {
@@ -134,19 +176,19 @@ public class f1Adapter extends RecyclerView.Adapter{
                     }
                 }
             });
-//            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View view) {
-//                    int pos = getAdapterPosition();
-//
-//                    if(pos != RecyclerView.NO_POSITION){
-//                        if(mLongListener !=null){
-//                            mLongListener.onItemLongClick(view,pos);
-//                        }
-//                    }
-//                    return true;
-//                }
-//            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+
+                    if(pos != RecyclerView.NO_POSITION){
+                        if(mLongListener !=null){
+                            mLongListener.onItemLongClick(view,pos);
+                        }
+                    }
+                    return true;
+                }
+            });
 
         }
     }
@@ -159,23 +201,27 @@ public class f1Adapter extends RecyclerView.Adapter{
             ucAgencyId = sharedPreferences.getString("ag", "");
             ucMemCourId = sharedPreferences.getString("me", "");
 
-            SharedPreferences sharedPreferences1 = view.getContext().getSharedPreferences("pppp", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
-            ucFriAreaNo = sharedPreferences1.getString("FriAreaNo", "");
-            ucFriDistribId = sharedPreferences1.getString("FriDistrib", "");
-            ucFriAgencyId = sharedPreferences1.getString("FriAgency", "");
-            ucFriMemCourId = sharedPreferences1.getString("FriMemCour", "");
+            SharedPreferences sharedPreferences0 = view.getContext().getSharedPreferences("cour", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+            ucFriMemCourId = sharedPreferences0.getString("FriMemCour", "");
 
-            SharedPreferences sharedPreferences2 = view.getContext().getSharedPreferences("aaaa", MODE_PRIVATE);
-            int get_roomlist_pos = sharedPreferences2.getInt("room_list_position", 0);
+            SharedPreferences sharedPreferences1 = view.getContext().getSharedPreferences("zxcv", MODE_PRIVATE);    // test 이름의 기본모드 설정, 만약 test key값이 있다면 해당 값을 불러옴.
+            ucFriAreaNo = sharedPreferences1.getString("aa" , "");
+            ucFriDistribId = sharedPreferences1.getString("bb" , "");
+            ucFriAgencyId = sharedPreferences1.getString("cc" , "");
+
+
+            SharedPreferences sharedPreferences2 = view.getContext().getSharedPreferences("delete_pos", MODE_PRIVATE);
+            int getFpos = sharedPreferences2.getInt("fposition", 0);
+
 
             LoginService service = (new RetrofitConfig()).getRetrofit().create(LoginService.class);
             service.deletefriends(ucAreaNo,
                     ucDistribId,
                     ucAgencyId,
                     ucMemCourId,
-                    ucFriAreaNo,
-                    ucFriDistribId,
-                    ucFriAgencyId,
+                    ucAreaNo,
+                    ucDistribId,
+                    ucAgencyId,
                     ucFriMemCourId)
                     .enqueue(new retrofit2.Callback<Add_Friends_Response>() {
                         @Override
@@ -187,7 +233,7 @@ public class f1Adapter extends RecyclerView.Adapter{
                                 try {
                                     final Add_Friends_Response add_friends_response = response.body();
 
-                                    f1List.remove(get_roomlist_pos);
+                                    f1List.remove(getFpos);
                                     notifyDataSetChanged();
                                     Toast.makeText(view.getContext(), "친구목록에서 삭제했습니다.", Toast.LENGTH_SHORT).show();
 
